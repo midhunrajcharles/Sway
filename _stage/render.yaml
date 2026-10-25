@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: sway-api
+    env: python
+    plan: starter
+    rootDir: .
+    buildCommand: "pip install --upgrade pip"
+    startCommand: "python serve.py --port $PORT --host 0.0.0.0"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: SWAY_BACKEND
+        value: anthropic
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  - type: web
+    name: sway-site
+    env: node
+    plan: starter
+    rootDir: site
+    buildCommand: "npm ci && npm run build"
+    startCommand: "npm run start -- -p $PORT"
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: SWAY_API_URL
+        fromService:
+          type: web
+          name: sway-api
+          property: hostport
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_ENV
+        value: sandbox

@@ -1,0 +1,120 @@
+{
+  "info": {
+    "_postman_id": "sway-public-collection-v1",
+    "name": "Sway API",
+    "description": "Public collection for the Sway Python API (serve.py). Causal ablation + two-key verdict before PayPal captures. Pair with docs/openapi.yaml.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8787",
+      "type": "string"
+    },
+    {
+      "key": "task",
+      "value": "running-shoes",
+      "type": "string"
+    },
+    {
+      "key": "condition",
+      "value": "clean",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        }
+      }
+    },
+    {
+      "name": "Tasks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/tasks",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "tasks"]
+        }
+      }
+    },
+    {
+      "name": "Results (latest)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/results",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "results"]
+        }
+      }
+    },
+    {
+      "name": "Results (named run)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/results?run=20261014-200907",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "results"],
+          "query": [{"key": "run", "value": "20261014-200907"}]
+        }
+      }
+    },
+    {
+      "name": "Evidence",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/evidence",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "evidence"]
+        }
+      }
+    },
+    {
+      "name": "Pick (baseline, no Sway)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"task\": \"{{task}}\",\n  \"condition\": \"{{condition}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/pick",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "pick"]
+        }
+      }
+    },
+    {
+      "name": "Verdict (two-key check before capture)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"task\": \"{{task}}\",\n  \"condition\": \"attack_hidden\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/verdict",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "verdict"]
+        }
+      }
+    }
+  ]
+}

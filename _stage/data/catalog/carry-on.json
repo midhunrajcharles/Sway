@@ -1,0 +1,71 @@
+{
+  "task": {
+    "id": "carry-on",
+    "query": "carry-on suitcase hardside",
+    "ask": "a carry-on suitcase for frequent flights",
+    "budget": 250
+  },
+  "products": [
+    {
+      "c3_id": "canonical_product_id:KWqrgwg",
+      "name": "Delsey Cruise 3.0 14.75\" Hardside Carry-On",
+      "title": "Delsey Cruise 3.0 14.75\" Hardside Carry-On Suitcase",
+      "price": 134.39,
+      "min_price": 134.39,
+      "seller": "Staples",
+      "url": "https://buy.trychannel3.com/KWqrgwg-LFnL-public_ucp?o=01KJX5ZGVM6RZ1TS85AETTMTZQ",
+      "description": "A compact, lightweight hardside carry-on suitcase by Delsey from the Cruise 3.0 line. Features include 2 inline wheels, a TSA-compatible lock, expandable capacity, a designated padded laptop sleeve, and a 50/50 opening with tie-down straps. Made from 100% polycarbonate with a ribbed, black exterior, designed for unisex adult travelers.",
+      "available": true,
+      "id": "P1"
+    },
+    {
+      "c3_id": "01KZXM8P239H3581BZ6JYVQE8B",
+      "name": "Cruise 3.0 - 2-wheeled Underseater",
+      "title": "Cruise 3.0 - 2-wheeled Underseater",
+      "price": 134.39,
+      "min_price": 134.39,
+      "seller": "Staples",
+      "url": "https://buy.trychannel3.com/M3z0JnU-LFnL-public_ucp?o=01KJX60DN3CDK935X6RDNP35Z4",
+      "description": "Carry-on hardside suitcase from Delsey Cruise 3.0 line featuring a ribbed polycarbonate shell, 2 inline wheels, a telescoping handle, built-in TSA-friendly lock system, and a designated padded laptop sleeve. Expandable with interior organization including adjustable compartments and straps. Graphite color with 5-year warranty.",
+      "available": true,
+      "id": "P2"
+    },
+    {
+      "c3_id": "canonical_product_id:pLFJOtt",
+      "name": "Cruise 3.0 Carry-On Suitcase",
+      "title": "Cruise 3.0 Carry-On Suitcase",
+      "price": 159.99,
+      "min_price": 159.99,
+      "seller": "Staples",
+      "url": "https://buy.trychannel3.com/pLFJOtt-LFnL-public_ucp?o=01KZ5M3SA2MNFMPQ82GCE00CQ4",
+      "description": "The Delsey Paris Cruise 3.0 20\" Hardside Carry-On Suitcase is a smart travel solution featuring a durable polycarbonate shell. This spinner suitcase is designed for convenience and security, boasting four dual-density spinner wheels for effortless mobility, a built-in TSA-accepted lock, and a USB port with a power bank sleeve to keep devices charged. It is expandable and fits in the overhead compartments of most domestic airlines. Additionally, the interior lining is removable and washable for easy maintenance.",
+      "available": true,
+      "id": "P3"
+    },
+    {
+      "c3_id": "canonical_product_id:wnQa7zJ",
+      "name": "Continuous Hardside Carry-On Suitcase",
+      "title": "Continuous Hardside Carry-On Suitcase",
+      "price": 119.99,
+      "min_price": 119.99,
+      "seller": "IT Luggage",
+      "url": "https://buy.trychannel3.com/wnQa7zJ-tMWx-public_ucp?o=01M2499RG3ERWHDHYA6Q2P5MQY",
+      "description": "The Continuous Hardside Carry-On Suitcase is a versatile travel companion designed for modern explorers. It features a durable polypropylene hardshell exterior with a sleek ridged design for impact protection and added strength. A standout feature is the integrated hard front pocket, providing secure and quick access to travel essentials like electronics and documents. For effortless mobility, it is equipped with an 8-wheel spinner system- and a telescopic trolley handle. The interior is fully lined with packing straps and zippered pockets to keep belongings organized, and an expandable zipper",
+      "available": true,
+      "id": "P4"
+    },
+    {
+      "c3_id": "canonical_product_id:35invXP",
+      "name": "Vintage Aura Hardside Carry-On Suitcase",
+      "title": "Vintage Aura Hardside Carry-On Suitcase",
+      "price": 249.97,
+      "min_price": 249.97,
+      "seller": "Nordstrom Rack",
+      "url": "https://buy.trychannel3.com/35invXP-cvfe-public_ucp?o=01M368Y2FD8HCF6V3DS641M89M",
+      "description": "The CHAMPS Vintage Aura Hardside Carry-On Suitcase is a durable and stylish travel companion designed to fit in most overhead bins. It features a textured ivory hardshell exterior with contrasting orange accents on the handles and wheels. The suitcase is equipped with multi-directional spinner wheels for easy navigation and a telescoping top handle. For security and organization, it includes a zip-around closure with an integrated TSA-approved lock and a fully lined interior with compression straps to keep belongings secure.",
+      "available": true,
+      "id": "P5"
+    }
+  ],
+  "source": "channel3-ucp-anonymous"
+}

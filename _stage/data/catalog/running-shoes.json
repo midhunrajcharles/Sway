@@ -1,0 +1,71 @@
+{
+  "task": {
+    "id": "running-shoes",
+    "query": "running shoes",
+    "ask": "running shoes for daily training",
+    "budget": 120
+  },
+  "products": [
+    {
+      "c3_id": "01KZX8DE05KJBTMGET5W7PKQWX",
+      "name": "Runfalcon 3.0 Shoes",
+      "title": "Runfalcon 3.0 Shoes",
+      "price": 59.95,
+      "min_price": 39.95,
+      "seller": "SHOEBACCA.com",
+      "url": "https://buy.trychannel3.com/1FesGXD-lGBj-public_ucp?o=01KT37AMZN7G6K4XQNKJKR3NVC",
+      "description": "Lightweight running shoes designed for everyday training with a breathable mesh upper, cushioned midsole, and durable outsole. Featuring a responsive foam Cloudfoam-style midsole for comfort, a stabilizing heel and bright color accents, including pink heel counter, orange eyelet, and signature three stripes on the sides. Size options include 8 and various widths, with a medium width in the listed variant. Material appears to be textile upper with a foam midsole and rubber outsole for grip. Suitable for running, walking, and gym workouts.",
+      "available": true,
+      "id": "P1"
+    },
+    {
+      "c3_id": "01KZX91WZBVNJT8F8CP8Y7D5AA",
+      "name": "Adidas Runfalcon 5 Running Shoes",
+      "title": "Adidas Runfalcon 5 Running Shoes",
+      "price": 45.49,
+      "min_price": 38.0,
+      "seller": "Academy Sports + Outdoors",
+      "url": "https://buy.trychannel3.com/sAjLfw7-DEoc-public_ucp?o=01M1H3M39V3QKQM9Q1BCSSFEGV",
+      "description": "The adidas Men's Wide Runfalcon 5 Running Shoes are designed for performance and comfort. They feature lightweight, breathable mesh uppers to keep feet cool and Cloudfoam midsoles that provide a soft, springy feel by absorbing impact. For long-lasting durability, the shoes are equipped with Adiwear outsoles, and the OrthoLite\u00ae sockliners offer removable support. These low-top athletic sneakers are ideal for running and other active pursuits.",
+      "available": true,
+      "id": "P2"
+    },
+    {
+      "c3_id": "canonical_product_id:1V6FAZV",
+      "name": "adidas Response 2 Running Shoes",
+      "title": "adidas Response 2 Running Shoes",
+      "price": 69.95,
+      "min_price": 69.95,
+      "seller": "SHOEBACCA.com",
+      "url": "https://buy.trychannel3.com/1V6FAZV-lGBj-public_ucp?o=01KW20TY67NJQ6QY0JY4QS3QYY",
+      "description": "These adidas Response 2 running shoes offer a comfortable and functional experience for road runners. The lightweight, breathable mesh upper ensures a comfortable fit, while the Cloudfoam+ midsole provides soft, springy cushioning for a smooth ride. A durable rubber outsole offers reliable traction and stability on various surfaces. The shoe features a lace-up closure for a secure fit and an OrthoLite sockliner for added comfort. Designed for performance and style, these shoes are ideal for your daily runs.",
+      "available": true,
+      "id": "P3"
+    },
+    {
+      "c3_id": "canonical_product_id:8DDaiQf",
+      "name": "Scend Pro Running Shoes",
+      "title": "Scend Pro Running Shoes",
+      "price": 39.95,
+      "min_price": 39.95,
+      "seller": "SHOEBACCA.com",
+      "url": "https://buy.trychannel3.com/8DDaiQf-lGBj-public_ucp?o=01KRZATVSR0626VK1ZB4HH95ZW",
+      "description": "Experience your run with the PUMA Scend Pro, a lightweight and breathable running shoe designed for distance. Featuring a durable Protread rubber outsole for enhanced traction and a cushioned midsole for comfortable landings, this shoe offers lockdown support with a soft tongue. The vibrant blue knit upper is accented with black and grey PUMA Formstrip on the lateral sides.",
+      "available": true,
+      "id": "P4"
+    },
+    {
+      "c3_id": "canonical_product_id:JBvx0W0",
+      "name": "Jogit Running Shoes",
+      "title": "Jogit Running Shoes",
+      "price": 49.95,
+      "min_price": 49.95,
+      "seller": "SHOEBACCA.com",
+      "url": "https://buy.trychannel3.com/JBvx0W0-lGBj-public_ucp?o=01KT5ZTPY7DNPX9T08VHTGBHN5",
+      "description": "A lightweight athletic running shoe designed for everyday training and performance. Features a breathable mesh upper for ventilation, a cushioned midsole for energy return and comfort, and a durable outsole with good grip suitable for road running. The design emphasizes a secure lace closure and a responsive ride, suitable for runners seeking a balance of comfort and support.",
+      "available": true,
+      "id": "P5"
+    }
+  ],
+  "source": "channel3-ucp-anonymous"
+}

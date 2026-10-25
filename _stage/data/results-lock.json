@@ -1,0 +1,9 @@
+{
+  "main_run": "20261014-200907",
+  "main_results_sha256": "99a8b5c77ad5a09a58106ee6fef33771a8c207e8d776584160cc82f1335cb2e9",
+  "main_summary_sha256": "1d4dc5d4f2a17493a65967577b4496dca61333bdf752b03017e751dfe05b6ba0",
+  "subtle_run": "20261015-082558",
+  "subtle_results_sha256": "cc76983fe719e637d4e71b3136dddeb7e37f28d3a5fbda7d2e8455989026f35e",
+  "locked_at": "2026-11-03",
+  "notes": "Headline numbers verified. Stray bench.py runs do not update this; regenerate explicitly with python -m sway.lock."
+}

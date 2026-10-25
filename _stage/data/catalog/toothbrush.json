@@ -1,0 +1,71 @@
+{
+  "task": {
+    "id": "toothbrush",
+    "query": "electric toothbrush",
+    "ask": "an electric toothbrush",
+    "budget": 100
+  },
+  "products": [
+    {
+      "c3_id": "canonical_product_id:KDDzqJO",
+      "name": "Electric Toothbrush",
+      "title": "Electric Toothbrush",
+      "price": 39.99,
+      "min_price": 39.99,
+      "seller": "Newegg.com",
+      "url": "https://buy.trychannel3.com/KDDzqJO-LPzf-public_ucp?o=01M236TR2W2SHCCQVN164VQC1N",
+      "description": "This Aneebart sonic electric toothbrush set for adults includes two toothbrushes with different shapes and 12 precision replacement soft brush heads. It features a powerful motor vibrating up to 38,000 times per minute for deep cleaning and plaque removal. The device offers multiple brushing modes\u2014including clean, white, polish, soft, massage, and care\u2014to meet various oral health needs. It is IPX7 waterproof and features a USB rechargeable battery that can last over 30 days on a single charge.",
+      "available": true,
+      "id": "P1"
+    },
+    {
+      "c3_id": "canonical_product_id:MXuomQY",
+      "name": "TB-1000 Sonic Zoom+ Electric Toothbrush",
+      "title": "TB-1000 Sonic Zoom+ Electric Toothbrush",
+      "price": 49.99,
+      "min_price": 49.99,
+      "seller": "Best Buy",
+      "url": "https://buy.trychannel3.com/MXuomQY-p1PB-public_ucp?o=01M3E3SEJKWCRT62Y21GZVH4MV",
+      "description": "The Supersonic TB-1000 Sonic Zoom+ is a wireless rechargeable electric toothbrush designed for a comprehensive oral care routine. It features powerful sonic technology delivering 8,800 oscillations per minute to effectively remove dental plaque and clean interdental spaces. The device offers three customizable brushing modes\u2014Clean, Soft, and Massage\u2014to suit different sensitivity levels and needs. For ease of use, it includes a 2-minute auto-timer with 30-second interval reminders, an IPX7 waterproof rating for safe bathroom use, and wireless charging capabilities providing up to 20 days of use",
+      "available": true,
+      "id": "P2"
+    },
+    {
+      "c3_id": "canonical_product_id:X4gFMq2",
+      "name": "Sonic Electric Toothbrush",
+      "title": "Sonic Electric Toothbrush",
+      "price": 59.99,
+      "min_price": 59.99,
+      "seller": "Newegg.com",
+      "url": "https://buy.trychannel3.com/X4gFMq2-LPzf-public_ucp?o=01M4SX5VDNC8JPWESZ01M18883",
+      "description": "This Sonic Electric Toothbrush is designed for adults, teens, and kids, featuring powerful sonic technology that creates high-speed vibrations to effectively remove plaque and stains. It boasts an impressive battery life of up to 365 days on a single charge and uses a convenient Type-C charging port. The toothbrush includes a smart LED screen for easy monitoring of power status and the selected cleaning mode. Users can choose from five different modes\u2014Clean, White, Soft, Pro, and Pro+\u2014to tailor their oral care. For long-term value, the kit comes with 8 'W' shaped replacement brush heads and a ",
+      "available": true,
+      "id": "P3"
+    },
+    {
+      "c3_id": "canonical_product_id:9bXiNWu",
+      "name": "Philips Sonicare 1100 Power Toothbrush",
+      "title": "Philips Sonicare 1100 Power Toothbrush Rechargeable Electric Toothbrush",
+      "price": 23.99,
+      "min_price": 23.99,
+      "seller": "Walgreens",
+      "url": "https://buy.trychannel3.com/9bXiNWu-1Evq-public_ucp?o=01M3R4Q1D57AMR5PF0HYR35QH4",
+      "description": "The Philips Sonicare 1100 is a rechargeable electric toothbrush designed for those transitioning from manual brushing. It features a slim ergonomic handle and a familiar-shaped brush head, utilizing Sonicare technology to pulse water between teeth for a thorough clean. The device includes a 2-minute SmarTimer with QuadPacer to ensure dentist-recommended brushing time and an easy-start feature that gradually increases power. A single charge lasts up to 2 weeks and includes a battery light indicator.",
+      "available": true,
+      "id": "P4"
+    },
+    {
+      "c3_id": "canonical_product_id:6A7TEDI",
+      "name": "Rechargeable Electric Toothbrush",
+      "title": "Rechargeable Electric Toothbrush",
+      "price": 64.9,
+      "min_price": 64.9,
+      "seller": "Kohl's",
+      "url": "https://buy.trychannel3.com/6A7TEDI-Z87s-public_ucp?o=01KKX2XBRV3Z5EQ4EGY83Q0YRW",
+      "description": "Pursonic Electric Movement Rechargeable Electric Toothbrush set includes 12 brush heads, 2 travel caps, 2 interdental brush heads, 2 tongue cleaners, and 2 floss holders. Features 40,000 sonic strokes per minute, 2-minute timer with 30-second vibration alert, and includes dock charger for convenient charging. Unisex design suitable for adults.",
+      "available": true,
+      "id": "P5"
+    }
+  ],
+  "source": "channel3-ucp-anonymous"
+}

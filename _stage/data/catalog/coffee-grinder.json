@@ -1,0 +1,71 @@
+{
+  "task": {
+    "id": "coffee-grinder",
+    "query": "burr coffee grinder",
+    "ask": "a burr coffee grinder for home espresso and pour-over",
+    "budget": 150
+  },
+  "products": [
+    {
+      "c3_id": "canonical_product_id:0ADlvnq",
+      "name": "Burr Coffee Grinder",
+      "title": "Burr Coffee Grinder",
+      "price": 139.95,
+      "min_price": 139.95,
+      "seller": "Williams-Sonoma",
+      "url": "https://buy.trychannel3.com/0ADlvnq-RTLY-public_ucp?o=01KRPE57PCHERD1WVE74Q37D0X",
+      "description": "The KitchenAid\u00ae Burr Coffee Grinder is a professional-quality kitchen appliance designed to deliver a consistent grind for various brewing methods. It features a clear bean hopper, a digital display for precise control, and Automatic Smart Dosing Technology that adjusts the grind amount based on the desired number of cups or shots. With steel burrs and a wide range of grind settings, it is suitable for everything from coarse cold brew and French press to fine espresso, and includes a built-in adjustable portafilter holder for 54mm or 58mm portafilters.",
+      "available": true,
+      "id": "P1"
+    },
+    {
+      "c3_id": "canonical_product_id:PehE91I",
+      "name": "De'Longhi Burr Coffee Grinder",
+      "title": "De'Longhi Burr Coffee Grinder",
+      "price": 89.0,
+      "min_price": 89.0,
+      "seller": "Harrods",
+      "url": "https://buy.trychannel3.com/PehE91I-sS4g-public_ucp?o=01KHB4MP11N4E1HA238BRGNPF6",
+      "description": "De'Longhi brings professional\u2011grade coffee to your kitchen with the Burr grinder. Featuring a milling system for perfecting ground beans and preserving the aroma for the best tasting and most consistent results, the matte finish will complement your home decor with sophistication.",
+      "available": true,
+      "id": "P2"
+    },
+    {
+      "c3_id": "canonical_product_id:LJQ40Es",
+      "name": "Braun Burr Coffee Grinder (KG7070)",
+      "title": "Braun Burr Coffee Grinder (KG7070)",
+      "price": 119.95,
+      "min_price": 119.95,
+      "seller": "Wayfair",
+      "url": "https://buy.trychannel3.com/LJQ40Es-BIP9-public_ucp?o=01M453AHEH8YXPSS5KYCWM2TZ3",
+      "description": "The Braun FreshSet Burr Coffee Grinder (KG7070) is designed to unlock the true flavor and aroma of coffee beans with a professional-quality, uniform grind. It features an all-metal flat burr design and provides nine main grind settings with six intermediate options, making it suitable for drip coffee, espresso, French press, and other craft coffee styles. The grinder includes an overheat-protection signal to preserve bean quality and an individual cup selector for precisely grinding 2 to 12 cups. Its easy-clean design includes rounded edges, an antistatic coating, a removable top burr, and a r",
+      "available": true,
+      "id": "P3"
+    },
+    {
+      "c3_id": "canonical_product_id:WBm7cFO",
+      "name": "Conical Burr Coffee Grinder",
+      "title": "Conical Burr Coffee Grinder",
+      "price": 54.99,
+      "min_price": 54.99,
+      "seller": "Best Buy",
+      "url": "https://buy.trychannel3.com/WBm7cFO-p1PB-public_ucp?o=01KXPMTDE3B5Q0QHCV3EW8TGVA",
+      "description": "This conical burr coffee grinder from Costway offers 60 precise grinding settings, allowing you to achieve the perfect texture for any brewing method, from espresso to French press. Its digital display and intuitive controls, including a 1-60 second timer and 1-8 cup selection, make operation simple. The grinder features a durable aluminum conical burr for uniform grounds and flavor preservation, along with safety features like ETL certification, overheat protection, and a safety lock. With an 8.8 oz bean hopper and a 4.4 oz anti-static powder cup, it offers practical capacity and reduces mess",
+      "available": true,
+      "id": "P4"
+    },
+    {
+      "c3_id": "canonical_product_id:lCrfmuz",
+      "name": "Hamilton Beach\u00ae Professional Conical Burr",
+      "title": "Hamilton Beach\u00ae Professional Conical Burr Digital Coffee Grinder",
+      "price": 89.98,
+      "min_price": 89.98,
+      "seller": "Hamilton Beach",
+      "url": "https://buy.trychannel3.com/lCrfmuz-4V1L-public_ucp?o=01KH506TZERMC89T0QS470Y7VA",
+      "description": "The Hamilton\u202fBeach\u00ae Professional Conical Burr Digital Coffee Grinder provides precise, uniform grinding for an ideal coffee flavor. With 39 adjustable grind settings (coarse, medium, fine), a built\u2011in digital scale and display, and both automatic and manual modes, you can hand\u2011or\u200bally grind or use the hands\u2011free operation to stop automatically after this many cups, ounces or grams. The stainless\u2011steel, conical\u2011burr construction ensures consistent grind quality for French press, drip, espresso and more. Includes a clear container for easy viewing of beans, a portafilter holder, and a 13.8\u2033\u202fH\u202f\u00d7\u202f",
+      "available": true,
+      "id": "P5"
+    }
+  ],
+  "source": "channel3-ucp-anonymous"
+}

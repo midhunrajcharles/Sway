@@ -1,0 +1,237 @@
+openapi: 3.1.0
+info:
+  title: Sway API
+  version: 0.2.0
+  summary: Causal ablation + two-key verdict before PayPal captures.
+  description: "Sway runs the agent's shopping decision with each page it read ablated, scores each page's\
+    \ causal weight, and asks a second key \u2014 the Channel3 catalog \u2014 whether the deciding page\
+    \ tells the truth. The result is a pre-capture verdict ('allow' or 'block') and, when honest, a Payout\
+    \ destination."
+  contact:
+    name: Sway
+    url: https://github.com/midhunrajcharles/pay
+  license:
+    name: MIT
+servers:
+- url: http://127.0.0.1:8787
+  description: Local Sway API
+- url: https://sway-api.onrender.com
+  description: Render blueprint (sway-api service)
+paths:
+  /api/health:
+    get:
+      summary: Service health
+      operationId: getHealth
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  /api/tasks:
+    get:
+      summary: Benchmark tasks with real Channel3 products
+      operationId: getTasks
+      responses:
+        '200':
+          description: tasks + conditions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TasksEnvelope'
+  /api/results:
+    get:
+      summary: Latest benchmark rows for the AG Grid views
+      operationId: getResults
+      parameters:
+      - name: run
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Specific results directory (defaults to the latest in results/).
+      responses:
+        '200':
+          description: results rows + xray
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/evidence:
+    get:
+      summary: Headline numbers for the /evidence page
+      operationId: getEvidence
+      responses:
+        '200':
+          description: evidence payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evidence'
+  /api/pick:
+    post:
+      summary: What the shopping agent would buy (baseline, no Sway check)
+      operationId: postPick
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskConditionBody'
+      responses:
+        '200':
+          description: agent pick + stability
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pick'
+  /api/verdict:
+    post:
+      summary: Full Sway verdict before PayPal captures
+      operationId: postVerdict
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskConditionBody'
+      responses:
+        '200':
+          description: verdict + x-ray + one-sentence explanation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verdict'
+components:
+  schemas:
+    Health:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        backend:
+          type: string
+        model:
+          type: string
+        k:
+          type: integer
+      required:
+      - ok
+    TaskConditionBody:
+      type: object
+      properties:
+        task:
+          type: string
+          example: running-shoes
+        condition:
+          type: string
+          enum:
+          - clean
+          - honest_strong
+          - attack_hidden
+          - attack_redundant
+          - deceptive_visible
+          - covert_instruction
+          - price_smear
+          - fake_reviews
+      required:
+      - task
+      - condition
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        seller:
+          type: string
+    Page:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+    Pick:
+      type: object
+      properties:
+        task:
+          type: object
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        condition:
+          type: string
+        chosen:
+          type: string
+        stability:
+          type: number
+          format: float
+        pages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Page'
+        target:
+          type: string
+          nullable: true
+    Verdict:
+      type: object
+      properties:
+        verdict:
+          type: string
+          enum:
+          - allow
+          - block
+        sentence:
+          type: string
+        chosen:
+          type: string
+        stability:
+          type: number
+          format: float
+        xray:
+          type: array
+          items:
+            type: object
+        decider:
+          type: string
+          nullable: true
+        payout_eligible:
+          type: boolean
+    Evidence:
+      type: object
+      properties:
+        main_run:
+          type: string
+        main:
+          type: array
+          items:
+            type: object
+        subtle:
+          type: array
+          items:
+            type: object
+        model:
+          type: string
+        k:
+          type: integer
+    TasksEnvelope:
+      type: object
+      properties:
+        conditions:
+          type: array
+          items:
+            type: string
+        tasks:
+          type: array
+          items:
+            type: object
+tags:
+- name: Sway
+  description: The two-key verdict API.
