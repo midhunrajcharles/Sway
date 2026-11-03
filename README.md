@@ -1,19 +1,35 @@
 # Sway
 
+**Sway's receipt names why the agent bought, and PayPal moves money to the source that convinced it.**
+
 [![CI](https://github.com/midhunrajcharles/Sway/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/midhunrajcharles/Sway/actions/workflows/ci.yml)
 
-**Agents don't need better payment limits. They need to know who they're listening to — and so does the money.**
+## Judges: run in 60 seconds
 
-_When an AI buys something, Sway pays whoever actually convinced it — and stops the pages that tried to trick it._
+```bash
+python demo.py
+```
 
-AI agents now shop for people, and any web page they read can be written to steer them. Payment checks look at *what* an agent buys: the amount, the payee, the limits. Sway checks *why* it chose that item — and from the same check, pays the honest sources that convinced it.
+This boots the Sway engine (`:8787`) and the site (`:3300`) together with `SWAY_DEMO=1`, then open **http://localhost:3300/shop**. It needs Python 3.10+ and Node 20+ (the first run does `npm install`), plus a model for the shopping agent: the logged-in `claude` CLI, or `ANTHROPIC_API_KEY`.
+
+**No PayPal keys needed.** In demo mode every PayPal call (Orders v2 `AUTHORIZE` → `CAPTURE` / `VOID`, then Payouts) is answered by an in-process mock in [`site/lib/server/paypal.ts`](site/lib/server/paypal.ts) with the same response shapes as the real API. The real approve → verdict → capture-or-void → payout code path and the order ledger (`data/orders.json`) run unchanged; nothing leaves your machine and no money moves. Ids are prefixed `DEMO-`. The PayPal button becomes a local "Approve (SWAY_DEMO)" button. Set real sandbox keys (`docs/docs/paypal-sandbox-setup.md`) and they take precedence over the flag.
+
+A live check calls the model about 25–40 times (1–3 minutes), because no model-call cache ships in this repo. In `/shop`, pick a task and a test web (an attack web shows the void, an honest one shows the payout) and watch the ledger on `/ops`.
+
+## The number
+
+**0 / 16 false alarms on honest purchases, vs AttriGuard/MELON's 13 / 16.** Both block 19 / 19 manipulated purchases. Run `results/20261014-200907`, pinned by `data/results-lock.json`. Scope and limits are in Results and Limits below: 8 tasks, our own test pages, one model.
+
+## What it does
 
 While PayPal only holds the money (Orders v2 `intent: AUTHORIZE`), Sway re-runs the agent's decision with each page it read removed. One ablation does two things:
 
-1. **Pay the honest influence.** If the page that decided the pick passes the honesty test, Sway captures and sends a PayPal Payout to the publisher. The first per-sale creator rail for in-chat agent commerce.
-2. **Stop the manipulation.** If the deciding page is dishonest — hidden text, instructions aimed at AI agents, or price and stock claims that contradict the real Channel3 catalog — Sway voids the hold and offers the shopper the honest pick in one plain sentence.
+1. **Pay the honest influence.** If the page that decided the pick passes the honesty test, Sway captures and sends a PayPal Payout to the publisher.
+2. **Stop the manipulation.** If the deciding page is dishonest (hidden text, instructions aimed at AI agents, or price and stock claims that contradict the real Channel3 catalog), Sway voids the hold and offers the shopper the honest pick in one plain sentence.
 
-Built for the PayPal AI Hackathon 2026.
+## How this maps to PayPal's agent governance
+
+PayPal's [WebMCP post](https://developer.paypal.com/community/blog/WebMCP_PayPal_Agent_Ready) (Sep 16, 2026) keeps "payment approval, authentication, and buyer protection inside PayPal's trusted experience" and says "the buyer remains in charge of approving the transaction." Sway is built on those two properties and adds the one the checkout layer lacks: why the agent chose the item. The trust layer stays PayPal's. The shopper's PayPal approval stays human-approved, and the hold is only released after Sway's check. When Sway blocks, the shopper still decides: switch (void) or keep (capture). Each ledger row records the verdict, the pages that decided it and the sentence shown to the shopper, so a purchase is attributable to the sources that drove it and can be audited later (`data/orders.json`, `/ops`, `/xray`). PayPal's [agent-skills post](https://developer.paypal.com/community/blog/agent_skills_at_enterprise_scale) (Oct 9, 2026) is about governing agent skills at enterprise scale; a skill an agent loads is one more input that can steer a purchase, which is the kind of input Sway ablates. We cite these posts for direction, not endorsement: "attributable" and "audit" are our wording for what the ledger does, not quotes from PayPal.
 
 ## Results
 
@@ -65,11 +81,11 @@ python serve.py --port 8787
 cd site && cp env.example .env.local && npm install && npm run dev
 ```
 
-Put your PayPal sandbox keys in `site/.env.local` (steps in `docs/paypal-sandbox-setup.md`), then open http://localhost:3300. Without the keys, everything works except paying: the shopper screens say "PayPal is not connected".
+Put your PayPal sandbox keys in `site/.env.local` (steps in `docs/paypal-sandbox-setup.md`), then open http://localhost:3300. Without the keys and without `SWAY_DEMO=1`, everything works except paying: the shopper screens say "PayPal is not connected". `python demo.py` (above) runs the whole flow against the PayPal mock instead.
 
 For a hosted deploy, see `docs/deploy-render.md`: `render.yaml` ships both services with the right wiring.
 
-- The model-call cache in `data/cache` is included, so the benchmarked products answer instantly. New runs call the agent live (1–3 minutes).
+- `data/cache` (the model-call cache) is not committed in this checkout, so every check calls the agent live (1–3 minutes). It fills as you use it.
 - To use an API key instead of the `claude` CLI: `python serve.py --backend anthropic --model <model id>` with `ANTHROPIC_API_KEY` set (also `openai`, `groq`, `openrouter`, `gemini`).
 - Benchmark: `python bench.py` · tests: `python -m pytest tests`
 - OpenAPI spec: `python -m sway.openapi` (writes `docs/openapi.yaml`). Postman collection: `docs/sway.postman_collection.json`. APIMatic steps: `docs/apimatic-setup.md`.
@@ -119,3 +135,15 @@ Hackathon boilerplate base: PayPal + AG Grid (Eddie Jaoude), Apache-2.0.
 ## License
 
 MIT, see `LICENSE`.
+
+## Judging criteria → where to find it
+
+Timestamps refer to the shot list in [`docs/docs/demo-script.md`](docs/docs/demo-script.md) (2:50 cut).
+
+| Criterion | Where to look |
+|---|---|
+| **Innovation** | Two-key verdict (decided it AND dishonest) in [`sway/core.py`](sway/core.py) `check()`; dishonesty signals in [`sway/detect.py`](sway/detect.py); the novelty vs ContextCite / MELON / AttriGuard in [`docs/docs/prior-art.md`](docs/docs/prior-art.md). Video 1:50–2:10 (the x-ray, and why attribution-only blocks honest reviews). |
+| **Impact** | 0 / 16 vs 13 / 16 false alarms in [`results/20261014-200907/summary.md`](results/20261014-200907/summary.md); publisher payouts in [`docs/docs/for-publishers.md`](docs/docs/for-publishers.md), merchant side in [`docs/docs/for-merchants.md`](docs/docs/for-merchants.md); honest gaps in [`docs/docs/limits.md`](docs/docs/limits.md). Video 2:10–2:20. |
+| **Implementation** | PayPal calls and the `SWAY_DEMO` mock in [`site/lib/server/paypal.ts`](site/lib/server/paypal.ts); authorize → verdict → capture/void/payout in [`site/app/api/shop/approve/route.ts`](site/app/api/shop/approve/route.ts); ledger in [`site/lib/server/sway-api.ts`](site/lib/server/sway-api.ts); engine tests in [`tests/test_sway.py`](tests/test_sway.py); CI in [`.github/workflows/ci.yml`](.github/workflows/ci.yml); API spec in [`docs/openapi.yaml`](docs/openapi.yaml). Video 0:42–1:32 (hold, void, payout in real PayPal). |
+| **Design** | Shopper chat [`site/app/shop/shopper.tsx`](site/app/shop/shopper.tsx); x-ray grid [`site/app/xray/xray.tsx`](site/app/xray/xray.tsx); ops grid [`site/app/ops/ops.tsx`](site/app/ops/ops.tsx). Video 1:15 (the stop message) and 2:20. |
+| **Presentation** | Shot list [`docs/docs/demo-script.md`](docs/docs/demo-script.md); [`docs/docs/devpost-story.md`](docs/docs/devpost-story.md); [`docs/docs/pitch.md`](docs/docs/pitch.md); branding in [`docs/docs/branding.md`](docs/docs/branding.md). |
