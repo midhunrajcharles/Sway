@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import { Badge, SwayGrid } from "@/components/SwayGrid";
 import { EnvBadge } from "@/components/EnvBadge";
+import { LedgerGrid } from "./ledger-grid";
 import { Text } from "@/components/Text";
 import { money, request, type LedgerEntry } from "@/lib/sway";
 
@@ -15,7 +16,7 @@ type Order = {
   price: number;
   decidedBy: string[];
   verdict: "PASS" | "BLOCK" | null;
-  status: "Paid" | "Switched" | "Kept by shopper" | "On hold" | "Awaiting approval";
+  status: "Paid" | "Switched" | "Kept by shopper" | "On hold" | "Awaiting approval" | "Refunded";
   kept: number;
 };
 type SiteRow = { site: string; read: number; decided: number; blocked: number; moved: number };
@@ -26,6 +27,7 @@ const STATUS_OF: Record<LedgerEntry["status"], Order["status"]> = {
   KEPT_BY_SHOPPER: "Kept by shopper",
   HELD: "On hold",
   CREATED: "Awaiting approval",
+  REFUNDED: "Refunded",
 };
 
 /** One row per PayPal order in the ledger; a switch order is the shopper's own pick, so it carries no sites. */
@@ -96,6 +98,7 @@ const STATUS: Record<Order["status"], "ok" | "warn" | "muted" | "amber"> = {
   "Kept by shopper": "muted",
   "On hold": "amber",
   "Awaiting approval": "muted",
+  Refunded: "muted",
 };
 
 const orderColumns: ColDef<Order>[] = [
@@ -127,7 +130,7 @@ const orderColumns: ColDef<Order>[] = [
 ];
 
 export function Ops() {
-  const [view, setView] = useState<"sites" | "orders">("sites");
+  const [view, setView] = useState<"ledger" | "sites" | "orders">("ledger");
   const [search, setSearch] = useState("");
   const [ledger, setLedger] = useState<LedgerEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -162,6 +165,9 @@ export function Ops() {
 
       <div className="sw-toolbar">
         <div className="sw-seg" role="group" aria-label="View">
+          <button aria-pressed={view === "ledger"} onClick={() => setView("ledger")}>
+            Audit ledger
+          </button>
           <button aria-pressed={view === "sites"} onClick={() => setView("sites")}>
             By website
           </button>
@@ -169,7 +175,12 @@ export function Ops() {
             All orders
           </button>
         </div>
-        <input className="sw-search" type="search" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
+        {view !== "ledger" && <input className="sw-search" type="search" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />}
+        {process.env.NEXT_PUBLIC_SWAY_BRYNTUM === "1" && (
+          <a className="ops-link" href="/ops/payouts">
+            Payout schedule
+          </a>
+        )}
         <EnvBadge />
       </div>
 
@@ -179,7 +190,9 @@ export function Ops() {
           No agent purchases yet. Every purchase made in the shopping assistant appears here with its PayPal order id.
         </p>
       )}
-      {view === "sites" ? (
+      {view === "ledger" ? (
+        <LedgerGrid />
+      ) : view === "sites" ? (
         <SwayGrid<SiteRow> rows={sites} columns={siteColumns} search={search} />
       ) : (
         <SwayGrid<Order> rows={orders} columns={orderColumns} search={search} height={680} />

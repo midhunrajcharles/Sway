@@ -54,7 +54,16 @@ export type LedgerEntry = {
   decidedBy: string[];
   verdict?: "PASS" | "BLOCK";
   attrOnlyVerdict?: "PASS" | "BLOCK";
-  status: "CREATED" | "HELD" | "CAPTURED" | "VOIDED" | "KEPT_BY_SHOPPER";
+  status: "CREATED" | "HELD" | "CAPTURED" | "VOIDED" | "KEPT_BY_SHOPPER" | "REFUNDED";
+  /** Audit fields. Optional: rows written before the audit ledger existed do not have them. */
+  agentId?: string;
+  humanId?: string;
+  decidingUrls?: string[];
+  reasonTags?: string[];
+  refundId?: string;
+  payoutRecipient?: string;
+  payoutAmount?: number;
+  payoutBatchId?: string;
   alternative?: string;
   saved?: number;
   sentence?: string;
@@ -62,6 +71,30 @@ export type LedgerEntry = {
   createdAt: string;
   updatedAt: string;
 };
+
+/** Flat, display-ready projection of a LedgerEntry, served by /api/ledger. Missing facts are null, never invented. */
+export type Outcome = "captured" | "voided" | "refunded" | "held" | "pending";
+export type LedgerRow = {
+  orderId: string;
+  timestamp: string;
+  agentId: string | null;
+  humanId: string | null;
+  productId: string;
+  productTitle: string;
+  decidingPageUrl: string | null;
+  verdict: "pass" | "fail" | null;
+  reasonTag: string | null;
+  outcome: Outcome;
+  payoutRecipient: string | null;
+  payoutBatchId: string | null;
+  payoutAmount: number | null;
+  amount: number;
+  currency: string;
+  sandboxUrl: string | null;
+  /** Which row actions are valid right now; the action routes re-check this server-side. */
+  can: { approve: boolean; void: boolean; refund: boolean };
+};
+export type LedgerPage = { rows: LedgerRow[]; lastRow: number; total: number };
 
 /** The test webs the Sway API can put in front of the agent (its `conditions`), in the order shown. */
 export const WEBS: { id: string; label: string; detail: string; kind: "honest" | "attack" }[] = [

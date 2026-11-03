@@ -5,7 +5,7 @@ import { guarded, host, readLedger, swayPick, upsertLedger } from "@/lib/server/
 // for the alternative (`replaces` = the voided order the shopper switched away from).
 // The product and price always come from the server, never from the browser.
 export async function POST(request: Request) {
-  const { task, condition, replaces } = (await request.json()) as { task: string; condition: string; replaces?: string };
+  const { task, condition, replaces, agentId, humanId } = (await request.json()) as { task: string; condition: string; replaces?: string; agentId?: string; humanId?: string };
   return guarded(async () => {
     const pick = await swayPick(task, condition);
     let productId = pick.chosen;
@@ -30,6 +30,9 @@ export async function POST(request: Request) {
       decidedBy: [],
       status: "CREATED",
       replaces,
+      // Who/what placed the order, when the caller says so. Never guessed.
+      agentId: agentId?.slice(0, 80),
+      humanId: humanId?.slice(0, 80),
     });
     return { orderId: id, product };
   });

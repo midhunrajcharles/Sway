@@ -32,8 +32,9 @@ cd site && cp env.example .env.local && npm install && npm run dev   # Next.js s
 - `scenarios.py`: builds test webs for the 8 `CONDITIONS` (clean, attack_*, honest_strong, and the "subtle" ones); `catalog.py`: the 8 tasks and Channel3 products (`data/catalog/*.json`); `explain.py`: the plain-language verdict sentence; `server.py`: the stdlib HTTP API (`/api/health|tasks|pick|verdict|results|evidence`).
 
 **Next.js site (`site/`, App Router, React 19, AG Grid)**
-- `app/api/*` routes (shop pick/decide/approve/order, payouts, publishers/onboard, evidence, ops, tasks) are thin handlers over `lib/server/`: `sway-api.ts` (client to the Python API plus the order ledger), `paypal.ts` (Orders v2 AUTHORIZE/CAPTURE/VOID, Payouts, Partner Referrals, webhooks), `publishers.ts`.
+- `app/api/*` routes (shop pick/decide/approve/order/refund, payouts, publishers/onboard, evidence, ops, ledger, tasks) are thin handlers over `lib/server/`: `sway-api.ts` (client to the Python API plus the order ledger), `paypal.ts` (Orders v2 AUTHORIZE/CAPTURE/VOID, Payouts, Partner Referrals, webhooks), `publishers.ts`.
 - Order ledger is file-backed at `data/orders.json` (one level above `site/`, resolved from `process.cwd()`), so run the site from `site/`. Webhooks are signature-verified and idempotent on event id.
+- `/ops` has an operator audit ledger (AG Grid, infinite row model over `/api/ledger`; see `docs/docs/ops-ledger.md`). `/ops/payouts` is a Bryntum Scheduler behind `NEXT_PUBLIC_SWAY_BRYNTUM=1` (see `docs/bryntum.md`). Site unit test: `cd site && npm test`.
 - Env (`site/.env.local`): `PAYPAL_CLIENT_ID`, `PAYPAL_SECRET` (`render.yaml` names it `PAYPAL_CLIENT_SECRET`), `SWAY_API` (default `http://127.0.0.1:8787`). Without PayPal keys everything works except paying.
 - `lib/sway.ts` holds the shared types between the Python API responses and the site.
 

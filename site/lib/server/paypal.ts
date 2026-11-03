@@ -29,6 +29,7 @@ function demoCall(path: string, body: unknown): unknown {
   }
   if (/^\/v2\/payments\/authorizations\/[^/]+\/capture$/.test(path)) return { id: demoId("CAPTURE"), status: "COMPLETED" };
   if (/^\/v2\/payments\/authorizations\/[^/]+\/void$/.test(path)) return {}; // real PayPal answers 204
+  if (/^\/v2\/payments\/captures\/[^/]+\/refund$/.test(path)) return { id: demoId("REFUND"), status: "COMPLETED" };
   if (path === "/v1/payments/payouts") {
     const header = (body as { sender_batch_header: { sender_batch_id: string } }).sender_batch_header;
     return { batch_header: { payout_batch_id: demoId("PAYOUT"), batch_status: "SUCCESS", sender_batch_header: { sender_batch_id: header.sender_batch_id } } };
@@ -114,6 +115,12 @@ export async function captureAuthorization(authorizationId: string): Promise<{ c
 export async function voidAuthorization(authorizationId: string): Promise<{ status: string }> {
   const r = await call<{ status?: string }>(`/v2/payments/authorizations/${authorizationId}/void`);
   return { status: r.status ?? "VOIDED" };
+}
+
+/** Full refund of a captured payment (no body = refund the whole capture). */
+export async function refundCapture(captureId: string): Promise<{ refundId: string; status: string }> {
+  const r = await call<{ id: string; status: string }>(`/v2/payments/captures/${captureId}/refund`);
+  return { refundId: r.id, status: r.status };
 }
 
 // ---------- v2: Payouts, Partner Referrals, Webhooks, Vault ----------

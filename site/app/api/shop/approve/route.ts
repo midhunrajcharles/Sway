@@ -28,6 +28,9 @@ export async function POST(request: Request) {
       attrOnlyVerdict: r.attr_only_verdict,
       sentence: v.sentence,
       decidedBy: (r.verdict === "BLOCK" ? r.blocked_pages : r.decided_by_honest).map(pageHost),
+      // Audit trail: the full URL(s) that decided the pick and why they were (not) flagged.
+      decidingUrls: (r.verdict === "BLOCK" ? r.blocked_pages : r.decided_by_honest).map((id) => v.pages.find((p) => p.id === id)?.url ?? id),
+      reasonTags: r.verdict === "BLOCK" ? [...new Set(v.pages.filter((p) => r.blocked_pages.includes(p.id)).flatMap((p) => p.reasons))] : [],
     };
     if (r.verdict === "PASS") {
       const { captureId } = await captureAuthorization(authorizationId);
@@ -49,6 +52,9 @@ export async function POST(request: Request) {
             });
             row = await upsertLedger(orderId, {
               sentence: `${v.sentence} Paid ${match.host} $${amount.toFixed(2)} (batch ${payout.batchId}).`,
+              payoutRecipient: match.host,
+              payoutAmount: amount,
+              payoutBatchId: payout.batchId,
             });
           }
         } catch (err) {

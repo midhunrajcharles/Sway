@@ -33,7 +33,12 @@ export function ConnectPublisherForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="sw-card" style={{ display: "grid", gap: "1rem" }}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        void submit();
+      }}
+className="sw-card" style={{ display: "grid", gap: "1rem" }}>
       <label className="sw-small">
         <Text as="span" variant="body-large" weight="medium">Your site (host only)</Text>
         <input
@@ -55,7 +60,7 @@ export function ConnectPublisherForm() {
         />
       </label>
       <div className="sw-actions">
-        <WipeButton as="button" type="submit" disabled={pending}>
+        <WipeButton onClick={() => void submit()}>
           {pending ? "Creating referral…" : "Connect PayPal"}
         </WipeButton>
       </div>

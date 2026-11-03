@@ -8,6 +8,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { money, request, WEBS, type LedgerEntry, type PageInfo, type Pick, type Product, type Task, type Verdict } from "@/lib/sway";
 
+const AGENT_ID = "sway-shopper-agent";
+
+/** Anonymous, random, per-browser id for the audit ledger's human_id. It is not tied to any real identity. */
+function anonymousHumanId(): string | undefined {
+  try {
+    let id = localStorage.getItem("sway-anon-id");
+    if (!id) {
+      id = `anon-${crypto.randomUUID().slice(0, 8)}`;
+      localStorage.setItem("sway-anon-id", id);
+    }
+    return id;
+  } catch {
+    return undefined; // storage blocked: leave it blank rather than invent one
+  }
+}
+
 export type Tone = "ok" | "warn" | "busy" | undefined;
 export type FlowEvent = {
   id: number;
@@ -117,7 +133,7 @@ export function useShopFlow(task: Task | undefined, webId: string) {
   /** Called by PayPal's button: our server creates the AUTHORIZE order and returns its id. */
   async function createOrder(): Promise<string> {
     const replaces = phase === "approve-alt" ? (order.current ?? undefined) : undefined;
-    const r = await request<{ orderId: string }>("/api/shop/order", { task: task!.id, condition: webId, replaces });
+    const r = await request<{ orderId: string }>("/api/shop/order", { task: task!.id, condition: webId, replaces, agentId: AGENT_ID, humanId: anonymousHumanId() });
     order.current = r.orderId;
     return r.orderId;
   }

@@ -39,6 +39,9 @@ export async function POST(request: Request) {
 
     const row = await upsertLedger(orderId, {
       sentence: `${entry.sentence ?? ""} Paid ${match.host} $${amount.toFixed(2)}.`.trim(),
+      payoutRecipient: match.host,
+      payoutAmount: amount,
+      payoutBatchId: payout.batchId,
     });
 
     return { paid: true, publisher: match.host, amount, payout, entry: row };

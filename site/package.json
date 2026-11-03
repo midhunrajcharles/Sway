@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "next dev -p 3300",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "node --experimental-strip-types --test lib/server/ledger-view.test.ts"
   },
   "dependencies": {
+    "@bryntum/scheduler": "npm:@bryntum/scheduler-trial@^7.3.8",
+    "@bryntum/scheduler-react": "^7.3.8",
     "ag-grid-community": "^36.2.0",
     "ag-grid-react": "^36.2.0",
     "next": "16.4.0",
