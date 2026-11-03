@@ -63,7 +63,11 @@ export async function resolvePublisher(hosts: string[]): Promise<{ host: string;
   const dir = await readPublishers();
   for (const h of hosts) {
     const p = dir.publishers[h];
-    if (p && p.paypalEmail) return { host: h, publisher: p };
+    if (!p?.paypalEmail) continue;
+    // Seeded rows are placeholders. In the sandbox, SWAY_SANDBOX_PAYOUT_EMAIL (a sandbox Personal account,
+    // set in .env.local so it never reaches git) receives their payouts. Onboarded publishers keep their own email.
+    const override = p.source === "seed" ? process.env.SWAY_SANDBOX_PAYOUT_EMAIL : undefined;
+    return { host: h, publisher: override ? { ...p, paypalEmail: override } : p };
   }
   return null;
 }

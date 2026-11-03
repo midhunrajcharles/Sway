@@ -14,7 +14,9 @@ const BASE_URL = process.env.PAYPAL_ENV === "live" ? "https://api-m.paypal.com" 
  * mistaken for sandbox ids. Real keys (PAYPAL_CLIENT_ID + PAYPAL_SECRET) take precedence over the flag.
  */
 export const DEMO_CLIENT_ID = "sway-demo"; // keep in sync with site/lib/sway.ts
-const hasKeys = () => Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_SECRET);
+/** The app secret. render.yaml names it PAYPAL_CLIENT_SECRET, .env.local uses PAYPAL_SECRET: accept both. */
+export const paypalSecret = () => process.env.PAYPAL_SECRET ?? process.env.PAYPAL_CLIENT_SECRET;
+const hasKeys = () => Boolean(process.env.PAYPAL_CLIENT_ID && paypalSecret());
 export const isDemo = () => process.env.SWAY_DEMO === "1" && !hasKeys();
 
 export const paypalClientId = () => (hasKeys() ? process.env.PAYPAL_CLIENT_ID! : isDemo() ? DEMO_CLIENT_ID : null);
@@ -45,7 +47,8 @@ let cachedToken: { value: string; expiresAt: number } | undefined;
 
 async function accessToken(): Promise<string> {
   if (cachedToken && Date.now() < cachedToken.expiresAt) return cachedToken.value;
-  const { PAYPAL_CLIENT_ID: id, PAYPAL_SECRET: secret } = process.env;
+  const id = process.env.PAYPAL_CLIENT_ID;
+  const secret = paypalSecret();
   if (!id || !secret) throw new Error(NOT_CONNECTED);
   const res = await fetch(`${BASE_URL}/v1/oauth2/token`, {
     method: "POST",

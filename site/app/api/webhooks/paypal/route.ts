@@ -25,7 +25,7 @@ type PayPalWebhookEvent = {
 
 async function paypalAccessToken(): Promise<string> {
   const clientId = process.env.PAYPAL_CLIENT_ID;
-  const secret = process.env.PAYPAL_CLIENT_SECRET;
+  const secret = process.env.PAYPAL_SECRET ?? process.env.PAYPAL_CLIENT_SECRET;
   const base =
     (process.env.PAYPAL_ENV ?? "sandbox") === "live"
       ? "https://api-m.paypal.com"
