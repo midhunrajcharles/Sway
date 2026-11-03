@@ -1,6 +1,6 @@
 # Sway
 
-[![CI](https://github.com/midhunrajcharles/pay/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/midhunrajcharles/pay/actions/workflows/ci.yml)
+[![CI](https://github.com/midhunrajcharles/Sway/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/midhunrajcharles/Sway/actions/workflows/ci.yml)
 
 **Agents don't need better payment limits. They need to know who they're listening to — and so does the money.**
 
