@@ -6,7 +6,37 @@ import { randomUUID } from "node:crypto";
 
 const BASE_URL = process.env.PAYPAL_ENV === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
 
-export const paypalClientId = () => (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_SECRET ? process.env.PAYPAL_CLIENT_ID : null);
+/**
+ * SWAY_DEMO=1: dry-run mode for judges without PayPal keys. Every PayPal call below is answered by an
+ * in-process mock that returns the same response shapes as Orders v2 / Payments v2 / Payouts / Partner
+ * Referrals, so the real code paths (AUTHORIZE -> verdict -> CAPTURE or VOID -> Payout) and the ledger run
+ * unchanged. Nothing leaves the machine and no money moves. Ids are prefixed DEMO- so they are never
+ * mistaken for sandbox ids. Real keys (PAYPAL_CLIENT_ID + PAYPAL_SECRET) take precedence over the flag.
+ */
+export const DEMO_CLIENT_ID = "sway-demo"; // keep in sync with site/lib/sway.ts
+const hasKeys = () => Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_SECRET);
+export const isDemo = () => process.env.SWAY_DEMO === "1" && !hasKeys();
+
+export const paypalClientId = () => (hasKeys() ? process.env.PAYPAL_CLIENT_ID! : isDemo() ? DEMO_CLIENT_ID : null);
+
+const demoId = (kind: string) => `DEMO-${kind}-${randomUUID().slice(0, 8).toUpperCase()}`;
+
+/** Mock PayPal: same paths and response shapes as the live calls in this file. */
+function demoCall(path: string, body: unknown): unknown {
+  if (path === "/v2/checkout/orders") return { id: demoId("ORDER"), status: "CREATED" };
+  if (/^\/v2\/checkout\/orders\/[^/]+\/authorize$/.test(path)) {
+    return { status: "COMPLETED", purchase_units: [{ payments: { authorizations: [{ id: demoId("AUTH"), status: "CREATED" }] } }] };
+  }
+  if (/^\/v2\/payments\/authorizations\/[^/]+\/capture$/.test(path)) return { id: demoId("CAPTURE"), status: "COMPLETED" };
+  if (/^\/v2\/payments\/authorizations\/[^/]+\/void$/.test(path)) return {}; // real PayPal answers 204
+  if (path === "/v1/payments/payouts") {
+    const header = (body as { sender_batch_header: { sender_batch_id: string } }).sender_batch_header;
+    return { batch_header: { payout_batch_id: demoId("PAYOUT"), batch_status: "SUCCESS", sender_batch_header: { sender_batch_id: header.sender_batch_id } } };
+  }
+  if (path === "/v2/customer/partner-referrals") return { links: [{ rel: "action_url", href: "https://www.sandbox.paypal.com/?sway-demo=1" }] };
+  if (path === "/v1/notifications/verify-webhook-signature") return { verification_status: "SUCCESS" };
+  throw new Error(`SWAY_DEMO: no mock for ${path}`);
+}
 
 export const NOT_CONNECTED = "PayPal is not connected. Add PAYPAL_CLIENT_ID and PAYPAL_SECRET to site/.env.local and restart the site.";
 
@@ -33,6 +63,7 @@ async function accessToken(): Promise<string> {
 }
 
 async function call<T>(path: string, body?: unknown): Promise<T> {
+  if (isDemo()) return demoCall(path, body) as T;
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
     headers: {
@@ -176,6 +207,7 @@ export async function createPartnerReferral(opts: {
 /** Verify a PayPal webhook with the five transmission headers. */
 export async function verifyWebhookSignature(headers: Headers, rawBody: string): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID;
+  if (isDemo()) return false; // a demo run has no real webhook sender; never trust unsigned events
   if (!webhookId) {
     // Fail closed in production until the sandbox webhook id is set; in
     // development, allow the request through so the demo can be driven
@@ -207,6 +239,7 @@ export async function vaultAuthorizeProbe(opts: {
   amount: number;
   customId: string;
 }): Promise<{ supported: boolean; status: number; detail: string; orderId?: string }> {
+  if (isDemo()) return { supported: false, status: 0, detail: "SWAY_DEMO: vault probe is not simulated" };
   const value = opts.amount.toFixed(2);
   const url = `${BASE_URL}/v2/checkout/orders`;
   const res = await fetch(url, {

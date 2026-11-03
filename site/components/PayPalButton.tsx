@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { DEMO_CLIENT_ID } from "@/lib/sway";
 
 // PayPal's own checkout button (JS SDK, intent=authorize). The shopper approves in PayPal's window;
 // the order is created and authorized on our server, never in the browser.
@@ -56,9 +57,10 @@ export function PayPalButton({
   const handlers = useRef({ createOrder, onApprove, onError });
   handlers.current = { createOrder, onApprove, onError };
   const [ready, setReady] = useState(false);
+  const demo = clientId === DEMO_CLIENT_ID;
 
   useEffect(() => {
-    if (!clientId || !box.current) return;
+    if (!clientId || demo || !box.current) return;
     let buttons: Buttons | undefined;
     let alive = true;
     loadSdk(clientId)
@@ -85,6 +87,18 @@ export function PayPalButton({
         PayPal is not connected, so nothing can be paid. Add <code>PAYPAL_CLIENT_ID</code> and <code>PAYPAL_SECRET</code> to <code>site/.env.local</code>{" "}
         and restart the site.
       </p>
+    );
+  }
+  if (demo) {
+    return (
+      <div className="sw-paypal-slot">
+        <button
+          type="button"
+          onClick={() => handlers.current.createOrder().then(handlers.current.onApprove, (e: Error) => handlers.current.onError(e.message))}
+        >
+          Approve (SWAY_DEMO: simulated PayPal, no money moves)
+        </button>
+      </div>
     );
   }
   return (

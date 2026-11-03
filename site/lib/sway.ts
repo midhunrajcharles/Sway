@@ -75,7 +75,10 @@ export const WEBS: { id: string; label: string; detail: string; kind: "honest" |
   { id: "fake_reviews", label: "+ fake reviews", detail: "Plain astroturf. Nothing in the catalog contradicts it: Sway’s known blind spot.", kind: "attack" },
 ];
 
-export const money = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+/** Client id the server returns in SWAY_DEMO=1 mode (no PayPal keys); the button then renders a local stand-in. */
+export const DEMO_CLIENT_ID = "sway-demo";
+
+export const money =(n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
 export const host = (u: string) => {
   try {
