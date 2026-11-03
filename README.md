@@ -8,7 +8,7 @@ Attribution and payment routing for AI agent purchases.
 
 Sway provides causal attribution for AI agent decisions by identifying which sources influenced a purchase, validating their integrity against a trusted catalog, and routing payments accordingly. The system integrates with PayPal's authorization flow to hold funds during verification, then either captures the transaction and issues a payout to the influential source, or voids the transaction if manipulation is detected.
 
-## Quick Start
+## Judges: boot it in 60 seconds
 
 Requirements: Python 3.10+, Node.js 20+, and either the `claude` CLI (logged in) or `ANTHROPIC_API_KEY`.
 
@@ -20,7 +20,7 @@ This command starts the Sway engine (`:8787`) and Next.js application (`:3300`) 
 
 **Demo mode operates without PayPal credentials.** All PayPal API calls (Orders v2 `AUTHORIZE` → `CAPTURE` / `VOID`, Payouts) are handled by an in-process mock in [`site/lib/server/paypal.ts`](site/lib/server/paypal.ts) with response shapes matching the production API. The complete workflow—authorization, verdict, capture/void, payout—executes against the order ledger (`data/orders.json`) without external network calls. Transaction IDs are prefixed `DEMO-`. Real sandbox credentials (`docs/docs/paypal-sandbox-setup.md`) override demo mode when configured.
 
-Processing time is 1–3 minutes per transaction (25–40 model calls) as no model-call cache is included in the repository. Select a shopping task in `/shop`, choose a test source (manipulated sources trigger voids, honest sources trigger payouts), and monitor the ledger at `/ops`.
+Boot takes under a minute. The first purchase then takes 1–3 minutes (25–40 model calls), because no model-call cache is included as no model-call cache is included in the repository. Select a shopping task in `/shop`, choose a test source (manipulated sources trigger voids, honest sources trigger payouts), and monitor the ledger at `/ops`.
 
 ## Key Results
 
@@ -69,8 +69,22 @@ Sway integrates with PayPal's transaction and payout infrastructure:
 | Orders v2 — `AUTHORIZE` / `CAPTURE` / `VOID` | Authorization hold during verification; capture on validated transactions; void on detected manipulation |
 | Payouts | Transfer payment to the publisher whose content causally influenced the decision, executed post-capture |
 | Partner Referrals | Publisher onboarding flow at `/publishers` to establish payout destinations |
-| Webhooks | Asynchronous order state management with signature verification and event ID-based idempotency |
-| Vault + `AUTHORIZE` | Experimental investigation of payer-not-present authorization flows (sandbox only, see `docs/limits.md`) |
+| Webhooks | `/api/webhooks/paypal` receives order events and verifies the signature. Writing events to the ledger and event-ID idempotency are not implemented yet |
+| Vault + `AUTHORIZE` | Not implemented. Documented as an open question for payer-not-present flows (see `docs/docs/limits.md`) |
+
+## Operator audit ledger
+
+`/ops` shows every agent purchase in an AG Grid ledger (timestamp, agent and human ID, product, deciding page, honesty verdict with reason, PayPal order, outcome, payout, amount). Operators can Approve (capture), Void or Refund held or captured orders with the keyboard or mouse. Details: `docs/docs/ops-ledger.md`. A payout schedule view at `/ops/payouts` uses Bryntum Scheduler behind a feature flag (`docs/bryntum.md`).
+
+## Judging criteria: where to find it
+
+| Criterion | Where to look |
+|---|---|
+| Innovation | Ablation-based attribution in `sway/core.py`; comparison with the AttriGuard/MELON-style baseline in the Evaluation Results table; related work in `docs/docs/prior-art.md` |
+| Impact | `docs/docs/for-merchants.md`, `docs/docs/for-publishers.md`; honest limits in `docs/docs/limits.md` |
+| Implementation | Orders v2 authorize, capture, void, refund and Payouts in `site/lib/server/paypal.ts`; routes in `site/app/api/`; ledger in `site/lib/server/ledger-view.ts`; tests in `tests/` and `site/lib/server/ledger-view.test.ts` |
+| Design | The site in `site/`; the keyboard-accessible audit grid at `/ops` (`site/app/ops/ledger-grid.tsx`); clip in `demo-film/shots/` |
+| Presentation | Demo script `docs/docs/demo-script.md`; submission text `docs/docs/devpost-story.md`; video link to be added once recorded |
 
 ## Known Limitations
 
