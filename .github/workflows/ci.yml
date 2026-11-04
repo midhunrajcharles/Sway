@@ -22,6 +22,8 @@ jobs:
   site:
     name: Site typecheck + build
     runs-on: ubuntu-latest
+    # A hung build should fail in minutes, not run until someone cancels it.
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: site
@@ -36,6 +38,7 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
       - name: Build
-        run: npm run build
+        # Turbopack's production build hangs on this project; webpack builds reliably.
+        run: npm run build -- --webpack
         env:
           NEXT_TELEMETRY_DISABLED: "1"
