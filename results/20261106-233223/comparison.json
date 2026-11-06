@@ -1,0 +1,132 @@
+{
+  "label": "DIRECTIONAL: 3 tasks, 1 scenario each, single model; token counts and LLM latency are modelled, not measured",
+  "agents": {
+    "sway": "counterfactual ablation replay (clean condition, k=5, top-5), cached model calls",
+    "ui_driving_baseline_playwright": "UI-driving baseline (Playwright): scripted click-through of a local mock shop; STUB, not Kernel"
+  },
+  "pinned_run": "20261106-223707",
+  "assumptions": {
+    "chars_per_token": 4,
+    "price_per_mtok_in_usd": 1.0,
+    "price_per_mtok_out_usd": 5.0,
+    "price_note": "Haiku-class list price assumed for BOTH agents; change here and the absolute dollars scale, the ratios do not.",
+    "llm_seconds_per_call": 29.1,
+    "latency_note": "derived from the pinned run (seconds * workers / new_calls); an upper-ish bound, includes CLI start-up",
+    "ui_prompt_overhead_tokens": 400,
+    "ui_output_tokens_per_step": 60,
+    "ui_history_tokens_per_step": 30,
+    "ui_note": "each UI step = one LLM call carrying the current page snapshot (visible text + clickable elements), a fixed instruction block, and a compact action history; one short action emitted"
+  },
+  "tasks": [
+    {
+      "task": "running-shoes",
+      "sway": {
+        "chosen": "P4",
+        "verdict": "PASS",
+        "steps": 25,
+        "sequential_waves": 5,
+        "tokens_in": 25688,
+        "tokens_out": 1638,
+        "tokens": 27326,
+        "wall_clock_s": 145.5,
+        "cost_usd": 0.0339
+      },
+      "ui_driving_baseline_playwright": {
+        "completed_checkout": true,
+        "steps": 26,
+        "tokens_in": 23936,
+        "tokens_out": 1560,
+        "tokens": 25496,
+        "wall_clock_s": 758.5,
+        "browser_s_measured": 1.9,
+        "cost_usd": 0.0317
+      },
+      "ui_over_sway": {
+        "steps": 1.04,
+        "tokens": 0.93,
+        "wall_clock_s": 5.21,
+        "cost_usd": 0.94
+      }
+    },
+    {
+      "task": "office-chair",
+      "sway": {
+        "chosen": "P4",
+        "verdict": "PASS",
+        "steps": 25,
+        "sequential_waves": 5,
+        "tokens_in": 26872,
+        "tokens_out": 1818,
+        "tokens": 28690,
+        "wall_clock_s": 145.5,
+        "cost_usd": 0.036
+      },
+      "ui_driving_baseline_playwright": {
+        "completed_checkout": true,
+        "steps": 26,
+        "tokens_in": 24242,
+        "tokens_out": 1560,
+        "tokens": 25802,
+        "wall_clock_s": 758.4,
+        "browser_s_measured": 1.8,
+        "cost_usd": 0.032
+      },
+      "ui_over_sway": {
+        "steps": 1.04,
+        "tokens": 0.9,
+        "wall_clock_s": 5.21,
+        "cost_usd": 0.89
+      }
+    },
+    {
+      "task": "backpack",
+      "sway": {
+        "chosen": "P3",
+        "verdict": "PASS",
+        "steps": 25,
+        "sequential_waves": 5,
+        "tokens_in": 25854,
+        "tokens_out": 1884,
+        "tokens": 27738,
+        "wall_clock_s": 145.5,
+        "cost_usd": 0.0353
+      },
+      "ui_driving_baseline_playwright": {
+        "completed_checkout": true,
+        "steps": 26,
+        "tokens_in": 23834,
+        "tokens_out": 1560,
+        "tokens": 25394,
+        "wall_clock_s": 758.4,
+        "browser_s_measured": 1.8,
+        "cost_usd": 0.0316
+      },
+      "ui_over_sway": {
+        "steps": 1.04,
+        "tokens": 0.92,
+        "wall_clock_s": 5.21,
+        "cost_usd": 0.9
+      }
+    }
+  ],
+  "total": {
+    "sway": {
+      "steps": 75,
+      "tokens": 83754,
+      "wall_clock_s": 436.5,
+      "cost_usd": 0.1052
+    },
+    "ui_driving_baseline_playwright": {
+      "steps": 78,
+      "tokens": 76692,
+      "wall_clock_s": 2275.3,
+      "cost_usd": 0.0953
+    },
+    "ui_over_sway": {
+      "steps": 1.04,
+      "tokens": 0.92,
+      "wall_clock_s": 5.21,
+      "cost_usd": 0.91
+    }
+  }
+}

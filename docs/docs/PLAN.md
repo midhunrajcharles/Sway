@@ -16,7 +16,8 @@ Notes for whoever runs these prompts:
 | 4 AG Grid ledger + Bryntum | done (`/ops`, `/ops/payouts`, `docs/docs/ops-ledger.md`, `docs/bryntum.md`) |
 | 5 Channel3 depth | done: top-5 Channel3 results per task, chosen and attacker-target logged, "Attacker's target named correctly" column, benchmark rerun `results/20261106-223707`, `data/results-lock.json` re-pinned to it |
 | 6 Fake-reviews gap | done, option B (honest reframe): limit renamed in README + `docs/docs/limits.md`, issue text in `docs/docs/astroturf-bounty.md` (GitHub issue not yet filed: `gh` not installed). No code or benchmark change; lock untouched |
-| 7–10 | not started |
+| 7 UI-agent comparison | done, directional: Playwright stub (not Kernel), 3 tasks, `results/20261106-233223/comparison.json`, `docs/docs/comparison.md`, README chart. Steps/tokens/cost about equal; wall-clock 5.2x in Sway's favour (parallelism). Tokens and latency modelled, no live model calls |
+| 8–10 | not started |
 
 ---
 

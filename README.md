@@ -28,6 +28,12 @@ Boot takes under a minute. The first purchase then takes 1–3 minutes (25–40 
 
 Results from `results/20261106-223707`, validated against `data/results-lock.json`. Test configuration: 8 shopping tasks, 8 conditions, top-5 Channel3 results per task, k=5, single model (Claude Haiku).
 
+## Sway vs a UI-driving agent
+
+![UI-driving baseline (Playwright) / Sway](docs/img/comparison.svg)
+
+Directional only (3 tasks, modelled tokens and latency, scripted Playwright stub, not Kernel). Steps, tokens and cost come out roughly equal (1.04x, 0.92x, 0.91x UI / Sway); wall-clock favours Sway 5.21x because its ablation calls run in parallel. Sway is a verification layer on top of a purchase, not a cheaper way to shop. Details: [`docs/docs/comparison.md`](docs/docs/comparison.md).
+
 ## System Architecture
 
 During PayPal's authorization hold (Orders v2 `intent: AUTHORIZE`), Sway performs ablation analysis by re-executing the agent's decision process with each source removed individually. The system operates in two modes:
