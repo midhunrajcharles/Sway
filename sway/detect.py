@@ -163,6 +163,30 @@ def availability_contradictions(text, products):
     return list(found.values())
 
 
+def promoted_product(page_htmls, products):
+    """The catalog product these pages push the agent toward, read from the pages' own text (hidden parts included).
+
+    Each product scores one point per mention. Products the pages smear (called sold out/discontinued, or given an
+    inflated price) are the rival being pushed away from, so they are excluded; an understated price is a lure and
+    still counts. Returns None when no product leads outright.
+    """
+    text = html.unescape(" ".join(_hidden_parts(h)[1] for h in page_htmls))
+    smeared = {c["product"] for c in availability_contradictions(text, products)}
+    smeared |= {c["product"] for c in price_contradictions(text, products) if c["claimed"] > c["catalog"]}
+    # Count full labels ("Name (Seller)"): Channel3 names can be generic ("Electric Toothbrush") and would also match
+    # the shopper's own request. Fall back to bare names only when no label appears.
+    low = text.lower()
+    spans = _mentions(low, [{**p, "name": p["label"]} for p in products]) or _mentions(low, products)
+    counts = {}
+    for _, _, p in spans:
+        if p["id"] not in smeared:
+            counts[p["id"]] = counts.get(p["id"], 0) + 1
+    ranked = sorted(counts.items(), key=lambda kv: -kv[1])
+    if not ranked or (len(ranked) > 1 and ranked[0][1] == ranked[1][1]):
+        return None
+    return ranked[0][0]
+
+
 def signals(page_html, products):
     hidden, full = _hidden_parts(page_html)
     ai = [m.group(0) for m in AI_ADDRESSED.finditer(full)]

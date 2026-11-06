@@ -113,7 +113,8 @@ def _lock():
 MAIN_RUN, PINNED_SUBTLE = _lock()  # read from data/results-lock.json
 SUBTLE = {"fake_reviews", "covert_instruction", "price_smear"}
 BENCH_KEYS = ("task", "condition", "target", "chosen", "steered", "manipulated", "verdict", "attr_only_verdict",
-              "decider_correct", "decided_by_honest", "chosen_price", "alt_price", "stability", "calls")
+              "decider_correct", "decided_by_honest", "chosen_price", "alt_price", "stability", "calls",
+              "top_k", "chosen_c3_id", "attacker_target", "attacker_target_c3_id", "shift_detected", "target_named_correctly")
 
 
 def _rows(d):

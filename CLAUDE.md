@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Work follows `docs/docs/PLAN.md`** (the owner's checklist + prompt pack, Prompts 1–10). Read it before starting a task and update its Progress table when a prompt is done.
+
 ## What this is
 
 Sway: when an AI shopping agent buys something, Sway re-runs the agent's decision with each web page it read removed (counterfactual ablation). If the page that decided the pick is honest, the purchase is captured and the publisher is paid via PayPal Payouts. If it is dishonest (hidden text, instructions aimed at AI agents, claims contradicting the real Channel3 catalog), the PayPal authorization is voided. Built for the PayPal AI Hackathon 2026. `README.md` and `docs/docs/limits.md` hold the benchmark numbers and the known gaps (e.g. fake reviews are not caught).

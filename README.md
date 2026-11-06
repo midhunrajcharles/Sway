@@ -24,9 +24,9 @@ Boot takes under a minute. The first purchase then takes 1–3 minutes (25–40 
 
 ## Key Results
 
-**Zero false positives on honest purchases** (0/16) compared to 13/16 for AttriGuard/MELON baseline, while maintaining 19/19 detection rate on manipulated purchases. 
+**Zero false positives on honest purchases** (0/16) compared to 12/16 for the AttriGuard/MELON-style baseline. Sway blocked 35/35 manipulated purchases that carry a verifiable falsehood or hidden instruction. It blocked **0/8 fake-review attacks**, which make no checkable claims (see Known Limitations).
 
-Results from `results/20261014-200907`, validated against `data/results-lock.json`. Test configuration: 8 shopping tasks, controlled test pages, single model (Claude Haiku).
+Results from `results/20261106-223707`, validated against `data/results-lock.json`. Test configuration: 8 shopping tasks, 8 conditions, top-5 Channel3 results per task, k=5, single model (Claude Haiku).
 
 ## System Architecture
 
@@ -49,16 +49,18 @@ PayPal's [agent skills post](https://developer.paypal.com/community/blog/agent_s
 
 Benchmark configuration: 8 shopping tasks (running shoes, wireless earbuds, burr coffee grinder, ergonomic office chair, carry-on suitcase, electric toothbrush, air purifier, laptop backpack) with Channel3 product catalog, controlled test pages (honest and manipulated), Claude Haiku as the decision agent, 5 repetitions per scenario. This represents a controlled evaluation environment, not a web-scale survey.
 
-| Metric (Run `results/20261014-200907`, 5 test sources) | Sway | Baseline (Block when any source decided, AttriGuard/MELON style) |
+| Metric (Run `results/20261106-223707`, all 8 conditions) | Sway | Baseline (Block when any source decided, AttriGuard/MELON style) |
 |---|---|---|
-| Steered purchases blocked before payment | **17 / 17** | 17 / 17 |
-| Manipulated purchases blocked (including off-target) | **19 / 19** | 19 / 19 |
-| False positives on honest purchases | **0 / 16** | 13 / 16 |
+| Steered purchases blocked before payment | **32 / 40** | 40 / 40 |
+| Manipulated purchases blocked (including off-target) | **35 / 43** | 43 / 43 |
+| False positives on honest purchases | **0 / 16** | 12 / 16 |
 | False positives when strong honest review was decisive | **0 / 8** | 8 / 8 |
 
-Additional metrics: Manipulated source identified correctly in 100% of blocked transactions. Average cost savings per blocked purchase: $18.58. Honest reviews that causally influenced decisions credited: 6/6.
+All 8 manipulated purchases Sway did not block are the fake-review condition (blocked 0/8). Excluding it, Sway blocked 35/35 manipulated and 32/32 steered purchases. The baseline's perfect block rate comes with a 75% false-alarm rate on honest purchases.
 
-Extended evaluation with 3 additional subtle attack vectors (`results/20261015-082558`, 8 test sources): Covert "final answer" injection blocked 8/8, false competitor price claims blocked 8/8. **Fake reviews (astroturfing without catalog contradictions) blocked 0/8.** False positive rate remained 0/16 on honest purchases.
+Additional metrics: Planted page identified correctly in 32/32 blocked steered purchases, and the attacker's target product named correctly in 35/35 blocked attacks. Average cost savings per blocked purchase: $15.20. Honest reviews that causally influenced decisions credited: 7/8.
+
+Per condition: covert "final answer" injection blocked 8/8, false competitor price claims blocked 7/8 (the eighth did not change the pick), redundant planted pages 8/8. **Fake reviews (astroturfing without catalog contradictions) blocked 0/8.**
 
 ## PayPal API Integration
 
@@ -88,7 +90,7 @@ Sway integrates with PayPal's transaction and payout infrastructure:
 
 ## Known Limitations
 
-- **Astroturfing without catalog contradictions.** Fake reviews that make no verifiable claims against the catalog cannot be detected through integrity validation. Integration with ratings/reputation data would address this gap.
+- **Pure astroturf with no checkable claim is a known boundary: Sway catches lies about checkable facts, not opinions.** Fake reviews that assert nothing the catalog can contradict pass (0/8 blocked). We did not ship a heuristic, because one that fires on them also fires on genuine lone expert reviews. Open as a bounty: [docs/docs/astroturf-bounty.md](docs/docs/astroturf-bounty.md).
 - **Persuasive but truthful content.** By design, compelling content that makes no false claims is not flagged. Skilled content that remains factually accurate passes validation.
 - **Single model evaluation.** Primary evaluation uses Claude Haiku. Preliminary Sonnet evaluation (1 task) showed higher baseline resistance to manipulation.
 - **Agent decision variance.** Decision consistency varies by task (lowest: 40% self-agreement), requiring statistical comparison against this baseline variance.
@@ -184,7 +186,7 @@ Video timestamps reference shot list in [`docs/docs/demo-script.md`](docs/docs/d
 | Criterion | Implementation Locations |
 |---|---|
 | **Innovation** | Dual-key verification logic (causal + integrity) in [`sway/core.py`](sway/core.py) `check()` function; integrity detection signals in [`sway/detect.py`](sway/detect.py); novelty comparison with prior work in [`docs/docs/prior-art.md`](docs/docs/prior-art.md). Video demonstration at 1:50–2:10 (x-ray interface, attribution-only baseline comparison). |
-| **Impact** | False positive comparison (0/16 vs 13/16) in [`results/20261014-200907/summary.md`](results/20261014-200907/summary.md); publisher value proposition in [`docs/docs/for-publishers.md`](docs/docs/for-publishers.md); merchant adoption factors in [`docs/docs/for-merchants.md`](docs/docs/for-merchants.md); technical constraints in [`docs/docs/limits.md`](docs/docs/limits.md). Video demonstration at 2:10–2:20. |
+| **Impact** | False positive comparison (0/16 vs 12/16) in [`results/20261106-223707/summary.md`](results/20261106-223707/summary.md); publisher value proposition in [`docs/docs/for-publishers.md`](docs/docs/for-publishers.md); merchant adoption factors in [`docs/docs/for-merchants.md`](docs/docs/for-merchants.md); technical constraints in [`docs/docs/limits.md`](docs/docs/limits.md). Video demonstration at 2:10–2:20. |
 | **Implementation** | PayPal API integration and demo mode mock in [`site/lib/server/paypal.ts`](site/lib/server/paypal.ts); authorization → verification → capture/void/payout flow in [`site/app/api/shop/approve/route.ts`](site/app/api/shop/approve/route.ts); ledger management in [`site/lib/server/sway-api.ts`](site/lib/server/sway-api.ts); test suite in [`tests/test_sway.py`](tests/test_sway.py); CI pipeline in [`.github/workflows/ci.yml`](.github/workflows/ci.yml); OpenAPI specification in [`docs/openapi.yaml`](docs/openapi.yaml). Video demonstration at 0:42–1:32 (authorization hold, void, payout in PayPal sandbox). |
 | **Design** | Shopping interface in [`site/app/shop/shopper.tsx`](site/app/shop/shopper.tsx); x-ray analysis grid in [`site/app/xray/xray.tsx`](site/app/xray/xray.tsx); operations ledger in [`site/app/ops/ops.tsx`](site/app/ops/ops.tsx). Video demonstration at 1:15 (manipulation notification) and 2:20 (ledger views). |
 | **Presentation** | Video shot list in [`docs/docs/demo-script.md`](docs/docs/demo-script.md); competition narrative in [`docs/docs/devpost-story.md`](docs/docs/devpost-story.md); technical presentation in [`docs/docs/pitch.md`](docs/docs/pitch.md); visual identity in [`docs/docs/branding.md`](docs/docs/branding.md). |

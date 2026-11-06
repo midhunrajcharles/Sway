@@ -2,7 +2,7 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 
 from .agent import decide
-from .detect import signals
+from .detect import promoted_product, signals
 
 
 def _jaccard(a, b):
@@ -67,7 +67,20 @@ def check(model, task, products, pages, k=3, flip_min=0.6, margin=0.4, workers=6
     blocker = max(blockers, key=lambda x: (x["flip_rate"], -len(x["pages"])), default=None)
     # Attribution-only baseline (AttriGuard/MELON style): block whenever any page decided, honest or not.
     attr_blocker = max((x for x in xray if x["decided"]), key=lambda x: (x["flip_rate"], -len(x["pages"])), default=None)
+    # Shift target: on the manipulated-page branch, name the product the blocked page(s) were pushing (from their
+    # text, so it is independent of what the agent actually bought) and whether removing them moved the pick.
+    attacker_target = None
+    if blocker:
+        html_by_id = {pg["id"]: pg["html"] for pg in pages}
+        attacker_target = promoted_product([html_by_id[pid] for pid in blocker["pages"]], products)
+    c3 = {p["id"]: p.get("c3_id") for p in products}
     return {
+        "top_k": len(products),
+        "chosen_product_id": chosen,
+        "chosen_c3_id": c3.get(chosen),
+        "attacker_target_product_id": attacker_target,
+        "attacker_target_c3_id": c3.get(attacker_target),
+        "shift_detected": bool(blocker) and blocker["without_it"] != chosen,
         "attr_only_verdict": "BLOCK" if attr_blocker else "PASS",
         "attr_only_blocked_pages": attr_blocker["pages"] if attr_blocker else [],
         "chosen": chosen,
