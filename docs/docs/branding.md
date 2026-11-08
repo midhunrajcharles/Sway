@@ -15,7 +15,7 @@
 |---|---|
 | Repo README with badges and Proof of integration table | DRAFT ready (03-build/README.md); copy to repo root before pushing public |
 | Devpost text (10 sections) | DRAFT ready (03-build/submission.md); paste into Devpost form |
-| Devpost cover image | TO DO — hero screenshot of `/evidence` chart (0/16 vs 13/16) |
+| Devpost cover image | TO DO — hero screenshot of `/evidence` chart (0/16 vs 12/16) |
 | YouTube thumbnail | TO DO — "AI bought shoes. One page lied." text + chart overlay |
 | YouTube title | *"Sway — paying the sources that convinced the AI, stopping the ones that tried to trick it"* |
 | YouTube description | 2-liner + repo + Devpost link + chapter timestamps |

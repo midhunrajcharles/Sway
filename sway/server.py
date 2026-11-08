@@ -203,19 +203,21 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8787)
     ap.add_argument("--backend", default="claude-cli")
     ap.add_argument("--model", default="haiku")
+    ap.add_argument("--cache-as", default=None, help="reuse the response cache of another backend/model, e.g. claude-cli/haiku")
     ap.add_argument("--temperature", type=float, default=1.0)
     ap.add_argument("--k", type=int, default=5)
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--extract", default="naive", choices=["naive", "rendered"])
     ap.add_argument("--seed", type=int, default=7)
     cfg = ap.parse_args()
-    cfg.model = Model(cfg.backend, cfg.model, cfg.temperature)
+    cfg.model = Model(cfg.backend, cfg.model, cfg.temperature, cfg.cache_as)
     Handler.cfg = cfg
-    print(f"Sway API on http://127.0.0.1:{cfg.port} ({cfg.backend}/{cfg.model.model}, k={cfg.k})", flush=True)
-    ThreadingHTTPServer(("127.0.0.1", cfg.port), Handler).serve_forever()
+    print(f"Sway API on http://{cfg.host}:{cfg.port} ({cfg.backend}/{cfg.model.model}, k={cfg.k})", flush=True)
+    ThreadingHTTPServer((cfg.host, cfg.port), Handler).serve_forever()
 
 
 if __name__ == "__main__":

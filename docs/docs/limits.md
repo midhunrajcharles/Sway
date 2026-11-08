@@ -2,7 +2,7 @@
 
 Everything Sway doesn't do, said plainly, before a judge finds it.
 
-> **Replay check 2026-11-03:** headline numbers verified against `results/20261014-200907/summary.md` and `results/20261015-082558/summary.md` without a new live run. 19/19 manipulated blocked, 0/16 false alarms, 13/16 attribution-only false alarms — unchanged from the published claims in README and `docs/devpost-story.md`.
+> **Replay check 2026-11-03:** headline numbers verified against `results/20261014-200907/summary.md` and `results/20261015-082558/summary.md` without a new live run. 19/19 manipulated blocked, 0/16 false alarms, 13/16 attribution-only false alarms on those earlier runs. The currently published run (`results/20261106-223707`, pinned in `data/results-lock.json`) reports 12/16 (75%), which is what the README and `docs/docs/devpost-story.md` now cite.
 
 > **Multi-entry stacking:** staff responded in `#general-hackathon-question` that stacking across sponsor tracks is allowed, pending Devpost confirmation. We submit one entry; a later Devpost ruling to the contrary doesn't affect the submission.
 

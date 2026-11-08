@@ -1,16 +1,18 @@
 services:
-  - type: web
+  # Private service: no public URL, reachable only from sway-site inside Render's network.
+  # This keeps strangers from running model calls on the Anthropic key.
+  - type: pserv
     name: sway-api
     env: python
     plan: starter
     rootDir: .
     buildCommand: "pip install --upgrade pip"
-    startCommand: "python serve.py --port $PORT --host 0.0.0.0"
+    # --cache-as reuses the committed benchmark cache (recorded on claude-cli/haiku), so benchmarked
+    # scenarios answer instantly; anything not cached calls the Anthropic API with the model below.
+    startCommand: "python serve.py --host 0.0.0.0 --port $PORT --backend anthropic --model claude-haiku-5-5 --cache-as claude-cli/haiku"
     envVars:
       - key: PYTHON_VERSION
         value: "3.11"
-      - key: SWAY_BACKEND
-        value: anthropic
       - key: ANTHROPIC_API_KEY
         sync: false
 
@@ -19,16 +21,18 @@ services:
     env: node
     plan: starter
     rootDir: site
-    buildCommand: "npm ci && npm run build"
+    # Turbopack hangs on this project, so build with webpack.
+    buildCommand: "npm ci && npm run build -- --webpack"
     startCommand: "npm run start -- -p $PORT"
     envVars:
       - key: NODE_VERSION
         value: "20"
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
-      - key: SWAY_API_URL
+      # fromService hostport is "host:port" with no scheme; sway-api.ts prepends http://.
+      - key: SWAY_API
         fromService:
-          type: web
+          type: pserv
           name: sway-api
           property: hostport
       - key: PAYPAL_CLIENT_ID
@@ -37,3 +41,9 @@ services:
         sync: false
       - key: PAYPAL_ENV
         value: sandbox
+      # Set after registering the webhook; without it production returns 401 on every webhook.
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      # Sandbox Personal account email that receives publisher payouts.
+      - key: SWAY_SANDBOX_PAYOUT_EMAIL
+        sync: false

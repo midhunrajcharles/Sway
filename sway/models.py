@@ -33,13 +33,16 @@ def _post(url, body, headers, retries=4):
 
 
 class Model:
-    def __init__(self, backend, model, temperature=1.0):
+    def __init__(self, backend, model, temperature=1.0, cache_as=None):
         self.backend, self.model, self.temperature = backend, model, temperature
+        # cache_as="claude-cli/haiku": look up and store cache entries under that backend/model
+        # identity, so a deployment on another backend reuses the committed benchmark cache.
+        self.cache_id = tuple(cache_as.split("/", 1)) if cache_as else (backend, model)
         self.calls = 0
         self.cache_hits = 0
 
     def _key(self, system, user, sample):
-        h = hashlib.sha256(json.dumps([self.backend, self.model, self.temperature, system, user, sample]).encode()).hexdigest()
+        h = hashlib.sha256(json.dumps([self.cache_id[0], self.cache_id[1], self.temperature, system, user, sample]).encode()).hexdigest()
         return CACHE / h[:2] / f"{h}.json"
 
     def complete(self, system, user, sample=0):

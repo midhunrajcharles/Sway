@@ -1,6 +1,6 @@
 # Sway
 
-Attribution and payment routing for AI agent purchases.
+When an AI shopping agent buys something, Sway checks which web page decided the pick: an honest page gets its publisher paid through PayPal, and a manipulated page gets the purchase voided before any money moves.
 
 [![CI](https://github.com/midhunrajcharles/Sway/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/midhunrajcharles/Sway/actions/workflows/ci.yml)
 
@@ -20,7 +20,7 @@ This command starts the Sway engine (`:8787`) and Next.js application (`:3300`) 
 
 **Demo mode operates without PayPal credentials.** All PayPal API calls (Orders v2 `AUTHORIZE` → `CAPTURE` / `VOID`, Payouts) are handled by an in-process mock in [`site/lib/server/paypal.ts`](site/lib/server/paypal.ts) with response shapes matching the production API. The complete workflow—authorization, verdict, capture/void, payout—executes against the order ledger (`data/orders.json`) without external network calls. Transaction IDs are prefixed `DEMO-`. Real sandbox credentials (`docs/docs/paypal-sandbox-setup.md`) override demo mode when configured.
 
-Boot takes under a minute. The first purchase then takes 1–3 minutes (25–40 model calls), because no model-call cache is included as no model-call cache is included in the repository. Select a shopping task in `/shop`, choose a test source (manipulated sources trigger voids, honest sources trigger payouts), and monitor the ledger at `/ops`.
+Boot takes under a minute. The benchmarked scenarios (the 8 tasks and 8 conditions in the published run) answer in seconds because their model calls are cached in the committed `data/cache`. Anything not in the cache runs live and takes 1–3 minutes (25–40 model calls). Select a shopping task in `/shop`, choose a test source (manipulated sources trigger voids, honest sources trigger payouts), and monitor the ledger at `/ops`.
 
 ## Key Results
 
@@ -121,17 +121,17 @@ Configure and start the Next.js application:
 cd site && cp env.example .env.local && npm install && npm run dev
 ```
 
-Configure PayPal sandbox credentials in `site/.env.local` (instructions: `docs/paypal-sandbox-setup.md`), then access http://localhost:3300. 
+Configure PayPal sandbox credentials in `site/.env.local` (instructions: `docs/docs/paypal-sandbox-setup.md`), then access http://localhost:3300. 
 
 Without credentials and outside demo mode, payment functionality displays "PayPal is not connected" but other features remain operational. Use `python demo.py` for full workflow testing against mocked PayPal responses.
 
 ### Production Deployment
 
-See `docs/deploy-render.md` for Render deployment. The `render.yaml` configuration handles both services with appropriate networking.
+See `docs/docs/deploy-render.md` for Render deployment. The `render.yaml` configuration handles both services with appropriate networking.
 
 ### Additional Configuration
 
-- **Model call cache**: `data/cache` is excluded from the repository. Initial runs will make live model calls (1–3 minutes per transaction). Cache populates automatically during use.
+- **Model call cache**: `data/cache` is committed (recorded on `claude-cli`/`haiku`), so benchmarked scenarios answer in seconds. New scenarios make live model calls (1–3 minutes per transaction) and add to the cache. To reuse that cache from another backend, pass `--cache-as claude-cli/haiku` (the Render deployment does this).
 - **Alternative model providers**: Use `python serve.py --backend <provider> --model <model_id>` with appropriate API key environment variable. Supported: `anthropic`, `openai`, `groq`, `openrouter`, `gemini`.
 - **Benchmark execution**: `python bench.py`
 - **Test suite**: `python -m pytest tests`
@@ -148,7 +148,7 @@ See `docs/deploy-render.md` for Render deployment. The `render.yaml` configurati
 | `serve.py`, `bench.py` | API server entry point and benchmark runner |
 | `tests/` | Unit tests and held-out validation sets |
 | `results/` | Benchmark run archives (each contains `summary.md`, `results.jsonl`, `xray.csv`) |
-| `data/` | Model call cache and Channel3 catalog cache |
+| `data/` | Committed model-call cache, Channel3 catalog, publishers, results lock |
 | `site/` | Next.js application (shopping interface, ledger views, AG Grid integration). See `site/README.md` |
 | `docs/` | Documentation (see table below) |
 | `demo-film/` | Demo video production pipeline (recording tools, Remotion project, storyboard) |
@@ -159,41 +159,29 @@ See `docs/deploy-render.md` for Render deployment. The `render.yaml` configurati
 
 | Document | Content |
 |---|---|
-| `docs/devpost-story.md` | Competition submission narrative |
-| `docs/demo-script.md` | Video shot list (2:50 duration, formatted for 3-minute limit) |
-| `docs/pitch.md` | 5-minute presentation with technical Q&A appendix |
-| `docs/deep-dive.md` | System architecture, PayPal integration details, novelty analysis, evaluation methodology |
-| `docs/branding.md` | Visual identity and asset inventory |
-| `docs/limits.md` | Technical constraints, open problems, detection blind spots |
-| `docs/deploy-render.md` | Render platform deployment guide |
+| `docs/docs/devpost-story.md` | Competition submission narrative |
+| `docs/docs/demo-script.md` | Video shot list (2:50 duration, formatted for 3-minute limit) |
+| `docs/docs/pitch.md` | 5-minute presentation with technical Q&A appendix |
+| `docs/docs/deep-dive.md` | System architecture, PayPal integration details, novelty analysis, evaluation methodology |
+| `docs/docs/branding.md` | Visual identity and asset inventory |
+| `docs/docs/limits.md` | Technical constraints, open problems, detection blind spots |
+| `docs/docs/deploy-render.md` | Render platform deployment guide |
 | `docs/apimatic-setup.md` | APIMatic SDK portal publication workflow |
 | `docs/postman-setup.md` | Postman public workspace publication steps |
-| `docs/for-publishers.md`, `docs/for-merchants.md` | Value proposition for each stakeholder group |
-| `docs/peer-tests.md` | Peer evaluation protocol |
-| `docs/next-actions.md` | Development schedule through November 12 deadline |
-| `docs/paypal-sandbox-setup.md` | PayPal sandbox credential configuration |
-| `docs/prior-art.md` | Related research and Sway's contributions |
-| `docs/BUILD-PROMPT.md`, `docs/STEP-PROMPTS.md` | Build documentation and incremental setup instructions |
-| `docs/sway-status.xlsx` | Feature completion tracking |
+| `docs/docs/for-publishers.md`, `docs/docs/for-merchants.md` | Value proposition for each stakeholder group |
+| `docs/docs/peer-tests.md` | Peer evaluation protocol |
+| `docs/docs/next-actions.md` | Development schedule through November 12 deadline |
+| `docs/docs/paypal-sandbox-setup.md` | PayPal sandbox credential configuration |
+| `docs/docs/prior-art.md` | Related research and Sway's contributions |
+| `docs/docs/BUILD-PROMPT.md`, `docs/docs/STEP-PROMPTS.md` | Build documentation and incremental setup instructions |
+| `docs/docs/sway-status.xlsx` | Feature completion tracking |
 
 ## Attribution and Prior Work
 
-The ablation-based attribution methodology builds on ContextCite, TracLLM, MELON, and AttriGuard. Sway's contributions: dual-key verification (causal attribution + integrity validation against trusted catalog), payment routing via Payouts API based on verification outcome, and integration with payment authorization flow. See `docs/prior-art.md` for detailed comparison.
+The ablation-based attribution methodology builds on ContextCite, TracLLM, MELON, and AttriGuard. Sway's contributions: dual-key verification (causal attribution + integrity validation against trusted catalog), payment routing via Payouts API based on verification outcome, and integration with payment authorization flow. See `docs/docs/prior-art.md` for detailed comparison.
 
 Base repository template: PayPal + AG Grid hackathon starter (Eddie Jaoude), Apache-2.0 license.
 
 ## License
 
 MIT License. See `LICENSE` file.
-
-## Evaluation Criteria Reference
-
-Video timestamps reference shot list in [`docs/docs/demo-script.md`](docs/docs/demo-script.md) (2:50 duration).
-
-| Criterion | Implementation Locations |
-|---|---|
-| **Innovation** | Dual-key verification logic (causal + integrity) in [`sway/core.py`](sway/core.py) `check()` function; integrity detection signals in [`sway/detect.py`](sway/detect.py); novelty comparison with prior work in [`docs/docs/prior-art.md`](docs/docs/prior-art.md). Video demonstration at 1:50–2:10 (x-ray interface, attribution-only baseline comparison). |
-| **Impact** | False positive comparison (0/16 vs 12/16) in [`results/20261106-223707/summary.md`](results/20261106-223707/summary.md); publisher value proposition in [`docs/docs/for-publishers.md`](docs/docs/for-publishers.md); merchant adoption factors in [`docs/docs/for-merchants.md`](docs/docs/for-merchants.md); technical constraints in [`docs/docs/limits.md`](docs/docs/limits.md). Video demonstration at 2:10–2:20. |
-| **Implementation** | PayPal API integration and demo mode mock in [`site/lib/server/paypal.ts`](site/lib/server/paypal.ts); authorization → verification → capture/void/payout flow in [`site/app/api/shop/approve/route.ts`](site/app/api/shop/approve/route.ts); ledger management in [`site/lib/server/sway-api.ts`](site/lib/server/sway-api.ts); test suite in [`tests/test_sway.py`](tests/test_sway.py); CI pipeline in [`.github/workflows/ci.yml`](.github/workflows/ci.yml); OpenAPI specification in [`docs/openapi.yaml`](docs/openapi.yaml). Video demonstration at 0:42–1:32 (authorization hold, void, payout in PayPal sandbox). |
-| **Design** | Shopping interface in [`site/app/shop/shopper.tsx`](site/app/shop/shopper.tsx); x-ray analysis grid in [`site/app/xray/xray.tsx`](site/app/xray/xray.tsx); operations ledger in [`site/app/ops/ops.tsx`](site/app/ops/ops.tsx). Video demonstration at 1:15 (manipulation notification) and 2:20 (ledger views). |
-| **Presentation** | Video shot list in [`docs/docs/demo-script.md`](docs/docs/demo-script.md); competition narrative in [`docs/docs/devpost-story.md`](docs/docs/devpost-story.md); technical presentation in [`docs/docs/pitch.md`](docs/docs/pitch.md); visual identity in [`docs/docs/branding.md`](docs/docs/branding.md). |

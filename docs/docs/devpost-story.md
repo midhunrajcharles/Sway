@@ -38,7 +38,7 @@ Honest pages are *supposed* to change an agent's mind: that's what a good review
 | On our benchmark (8 products, 5 conditions, Claude Haiku as the shopper) | Sway | "Decided it" alone |
 |---|---|---|
 | Manipulated purchases blocked | **19 / 19** | 19 / 19 |
-| False alarms on honest purchases | **0 / 16** | 13 / 16 |
+| False alarms on honest purchases | **0 / 16** | 12 / 16 |
 | False alarms when an honest expert review decided it | **0 / 8** | 8 / 8 |
 
 Attacks steered the agent in 17 of 24 runs without Sway. Sway stopped all 17 before payment and named the planted page every time. The shopper kept an average of $18.58 per blocked purchase.

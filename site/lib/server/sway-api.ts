@@ -21,7 +21,9 @@ import type { Evidence, LedgerEntry, Pick, Task, Verdict } from "@/lib/sway";
 
 export { host } from "@/lib/sway";
 
-const API = process.env.SWAY_API ?? "http://127.0.0.1:8787";
+// Render's fromService hostport gives "host:port" with no scheme; add http:// when missing.
+const RAW_API = (process.env.SWAY_API ?? "http://127.0.0.1:8787").trim();
+const API = (/^https?:\/\//i.test(RAW_API) ? RAW_API : `http://${RAW_API}`).replace(/\/+$/, "");
 const LEDGER = path.join(process.cwd(), "..", "data", "orders.json");
 
 async function api<T>(p: string, body?: unknown): Promise<T> {

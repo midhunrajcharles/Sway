@@ -80,7 +80,7 @@ A payment-agnostic version is a research project. The commerce rail is the thing
 | Metric | How measured | By when |
 |---|---|---|
 | Manipulated buys blocked | `results/20261014-200907` 8 tasks × k=5 | DONE (19/19 blocked) |
-| False alarms on honest buys | same run | DONE (0/16; attribution-only baseline: 13/16) |
+| False alarms on honest buys | same run | DONE (0/16; attribution-only baseline: 12/16) |
 | Honest sources credited | same run | DONE (6/6 strong honest reviews credited) |
 | Average savings per blocked buy | same run | DONE ($18.58) |
 | Known blind spot (fake reviews) | hardening run B | DONE (0/8; stated as known limit) |
@@ -97,7 +97,7 @@ A payment-agnostic version is a research project. The commerce rail is the thing
 | Design | Apple-feel site; AG Grid matrix on `/xray` + `/ops` + "Paid" column; PayPal JS SDK button |
 | Potential impact | Honey-fix framing; publisher economy for in-chat agent commerce; sits above every agent framework (platform-agnostic) |
 | Innovation | GitHub 0 results and YC 0 for causal-pay-at-checkout; first defense number on StakeBench-family attacks |
-| Presentation | 2:50 video; pitch chart 0/16 vs 13/16; Honest caveats upfront |
+| Presentation | 2:50 video; pitch chart 0/16 vs 12/16; Honest caveats upfront |
 
 ## Failure modes
 
