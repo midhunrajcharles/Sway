@@ -136,8 +136,8 @@ See `docs/deploy-render.md` for Render deployment. The `render.yaml` configurati
 - **Benchmark execution**: `python bench.py`
 - **Test suite**: `python -m pytest tests`
 - **OpenAPI specification generation**: `python -m sway.openapi` (output: `docs/openapi.yaml`)
-- **Postman collection**: `docs/sway.postman_collection.json`
-- **APIMatic SDK portal**: See `docs/apimatic-setup.md`
+- **Postman collection**: `docs/sway.postman_collection.json`; public workspace: https://dateeiji15-648689.postman.co/workspace/Sway-API~0104b657-9a28-4e16-afda-8c01796dc11f (steps in `docs/postman-setup.md`)
+- **APIMatic SDK portal**: https://dainty-pothos-703446.netlify.app (steps in `docs/apimatic-setup.md`)
 - **Benchmark result locking**: Published results are pinned via `data/results-lock.json`. Local benchmark runs require `python -m sway.lock --main <dir> --subtle <dir>` to update site display.
 
 ## Repository Structure
@@ -167,6 +167,7 @@ See `docs/deploy-render.md` for Render deployment. The `render.yaml` configurati
 | `docs/limits.md` | Technical constraints, open problems, detection blind spots |
 | `docs/deploy-render.md` | Render platform deployment guide |
 | `docs/apimatic-setup.md` | APIMatic SDK portal publication workflow |
+| `docs/postman-setup.md` | Postman public workspace publication steps |
 | `docs/for-publishers.md`, `docs/for-merchants.md` | Value proposition for each stakeholder group |
 | `docs/peer-tests.md` | Peer evaluation protocol |
 | `docs/next-actions.md` | Development schedule through November 12 deadline |

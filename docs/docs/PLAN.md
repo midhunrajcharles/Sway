@@ -17,7 +17,8 @@ Notes for whoever runs these prompts:
 | 5 Channel3 depth | done: top-5 Channel3 results per task, chosen and attacker-target logged, "Attacker's target named correctly" column, benchmark rerun `results/20261106-223707`, `data/results-lock.json` re-pinned to it |
 | 6 Fake-reviews gap | done, option B (honest reframe): limit renamed in README + `docs/docs/limits.md`, issue text in `docs/docs/astroturf-bounty.md` (GitHub issue not yet filed: `gh` not installed). No code or benchmark change; lock untouched |
 | 7 UI-agent comparison | done, directional: Playwright stub (not Kernel), 3 tasks, `results/20261106-233223/comparison.json`, `docs/docs/comparison.md`, README chart. Steps/tokens/cost about equal; wall-clock 5.2x in Sway's favour (parallelism). Tokens and latency modelled, no live model calls |
-| 8–10 | not started |
+| 8 API publishing | done: APIMatic portal at https://dainty-pothos-703446.netlify.app, Postman workspace at https://dateeiji15-648689.postman.co/workspace/Sway-API~0104b657-9a28-4e16-afda-8c01796dc11f, both URLs added to README |
+| 9–10 | not started |
 
 ---
 
