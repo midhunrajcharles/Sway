@@ -1,19 +1,19 @@
 services:
   # Switched from pserv to web so it can run on the free plan.
-  # Note: the API is now publicly reachable; the Anthropic key stays in env vars (not URL-exposed).
+  # Note: the API is now publicly reachable; the key stays in env vars (not URL-exposed).
   - type: web
     name: sway-api
     env: python
     plan: free
     rootDir: .
     buildCommand: "pip install --upgrade pip"
-    # --cache-as reuses the committed benchmark cache (recorded on claude-cli/haiku), so benchmarked
-    # scenarios answer instantly; anything not cached calls the Anthropic API with the model below.
-    startCommand: "python serve.py --host 0.0.0.0 --port $PORT --backend anthropic --model claude-haiku-5-5 --cache-as claude-cli/haiku"
+    # Groq free tier (OpenAI-compatible). Cached scenarios still answer from the committed cache;
+    # anything not cached calls Groq with the model below.
+    startCommand: "python serve.py --host 0.0.0.0 --port $PORT --backend groq --model llama-3.3-70b-versatile --cache-as claude-cli/haiku"
     envVars:
       - key: PYTHON_VERSION
         value: "3.11"
-      - key: ANTHROPIC_API_KEY
+      - key: GROQ_API_KEY
         sync: false
 
   - type: web
