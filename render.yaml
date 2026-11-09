@@ -1,14 +1,10 @@
 services:
-  # Switched from pserv to web so it can run on the free plan.
-  # Note: the API is now publicly reachable; the key stays in env vars (not URL-exposed).
   - type: web
     name: sway-api
     env: python
     plan: free
     rootDir: .
     buildCommand: "pip install --upgrade pip"
-    # Groq free tier (OpenAI-compatible). Cached scenarios still answer from the committed cache;
-    # anything not cached calls Groq with the model below.
     startCommand: "python serve.py --host 0.0.0.0 --port $PORT --backend groq --model llama-3.3-70b-versatile --cache-as claude-cli/haiku"
     envVars:
       - key: PYTHON_VERSION
@@ -21,7 +17,6 @@ services:
     env: node
     plan: free
     rootDir: site
-    # Turbopack hangs on this project, so build with webpack.
     buildCommand: "npm ci && npm run build -- --webpack"
     startCommand: "npm run start -- -p $PORT"
     envVars:
@@ -29,21 +24,17 @@ services:
         value: "20"
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
-      # fromService hostport is "host:port" with no scheme; sway-api.ts prepends http://.
+      # Public URL of the sway-api service. fromService.hostport returns an internal
+      # address that only pserv services can reach, so hardcode the public URL instead.
       - key: SWAY_API
-        fromService:
-          type: web
-          name: sway-api
-          property: hostport
+        value: https://sway-api-utg2.onrender.com
       - key: PAYPAL_CLIENT_ID
         sync: false
       - key: PAYPAL_CLIENT_SECRET
         sync: false
       - key: PAYPAL_ENV
         value: sandbox
-      # Set after registering the webhook; without it production returns 401 on every webhook.
       - key: PAYPAL_WEBHOOK_ID
         sync: false
-      # Sandbox Personal account email that receives publisher payouts.
       - key: SWAY_SANDBOX_PAYOUT_EMAIL
         sync: false
