@@ -1,10 +1,10 @@
 services:
-  # Private service: no public URL, reachable only from sway-site inside Render's network.
-  # This keeps strangers from running model calls on the Anthropic key.
-  - type: pserv
+  # Switched from pserv to web so it can run on the free plan.
+  # Note: the API is now publicly reachable; the Anthropic key stays in env vars (not URL-exposed).
+  - type: web
     name: sway-api
     env: python
-    plan: starter
+    plan: free
     rootDir: .
     buildCommand: "pip install --upgrade pip"
     # --cache-as reuses the committed benchmark cache (recorded on claude-cli/haiku), so benchmarked
@@ -19,7 +19,7 @@ services:
   - type: web
     name: sway-site
     env: node
-    plan: starter
+    plan: free
     rootDir: site
     # Turbopack hangs on this project, so build with webpack.
     buildCommand: "npm ci && npm run build -- --webpack"
@@ -32,7 +32,7 @@ services:
       # fromService hostport is "host:port" with no scheme; sway-api.ts prepends http://.
       - key: SWAY_API
         fromService:
-          type: pserv
+          type: web
           name: sway-api
           property: hostport
       - key: PAYPAL_CLIENT_ID
