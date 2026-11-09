@@ -24,13 +24,12 @@ services:
         value: "20"
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
-      # Public URL of the sway-api service. fromService.hostport returns an internal
-      # address that only pserv services can reach, so hardcode the public URL instead.
       - key: SWAY_API
         value: https://sway-api-utg2.onrender.com
       - key: PAYPAL_CLIENT_ID
         sync: false
-      - key: PAYPAL_CLIENT_SECRET
+      # Code (site/lib/server/paypal.ts) reads PAYPAL_SECRET, not PAYPAL_CLIENT_SECRET.
+      - key: PAYPAL_SECRET
         sync: false
       - key: PAYPAL_ENV
         value: sandbox
