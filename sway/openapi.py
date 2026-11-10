@@ -33,12 +33,12 @@ SPEC = {
             "pre-capture verdict ('allow' or 'block') and, when honest, a Payout "
             "destination."
         ),
-        "contact": {"name": "Sway", "url": "https://github.com/midhunrajcharles/pay"},
+        "contact": {"name": "Sway", "url": "https://github.com/midhunrajcharles/Sway"},
         "license": {"name": "MIT"},
     },
     "servers": [
         {"url": "http://127.0.0.1:8787", "description": "Local Sway API"},
-        {"url": "https://sway-api.onrender.com", "description": "Render blueprint (sway-api service)"},
+        {"url": "https://sway-api-utg2.onrender.com", "description": "Render blueprint (sway-api service, live)"},
     ],
     "paths": {
         "/api/health": {
@@ -126,6 +126,95 @@ SPEC = {
                     "200": {
                         "description": "verdict + x-ray + one-sentence explanation",
                         "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Verdict"}}},
+                    }
+                },
+            }
+        },
+        "/api/payouts/credit": {
+            "post": {
+                "summary": "Pay the publisher that causally decided an honest buy",
+                "operationId": "postPayoutsCredit",
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {"type": "object", "properties": {"orderId": {"type": "string"}}, "required": ["orderId"]}
+                        }
+                    },
+                },
+                "responses": {
+                    "200": {
+                        "description": "payout result",
+                        "content": {"application/json": {"schema": {"type": "object"}}},
+                    }
+                },
+            }
+        },
+        "/api/publishers/onboard": {
+            "post": {
+                "summary": "Create a PayPal Partner Referrals session for a publisher",
+                "operationId": "postPublishersOnboard",
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "host": {"type": "string"},
+                                    "publisherEmail": {"type": "string", "format": "email"},
+                                    "returnUrl": {"type": "string", "format": "uri"},
+                                },
+                                "required": ["host"],
+                            }
+                        }
+                    },
+                },
+                "responses": {
+                    "200": {
+                        "description": "referral session",
+                        "content": {"application/json": {"schema": {"type": "object"}}},
+                    }
+                },
+            }
+        },
+        "/api/webhooks/paypal": {
+            "post": {
+                "summary": "PayPal webhook ingest (signature-verified, idempotent by event id)",
+                "operationId": "postWebhooksPaypal",
+                "requestBody": {
+                    "required": True,
+                    "content": {"application/json": {"schema": {"type": "object"}}},
+                },
+                "responses": {
+                    "200": {
+                        "description": "received",
+                        "content": {"application/json": {"schema": {"type": "object"}}},
+                    },
+                    "401": {"description": "signature verification failed"},
+                },
+            }
+        },
+        "/api/vault/test": {
+            "post": {
+                "summary": "Sandbox probe: AUTHORIZE + payment_source.paypal.vault_id",
+                "operationId": "postVaultTest",
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {"vaultId": {"type": "string"}, "amount": {"type": "number"}},
+                                "required": ["vaultId"],
+                            }
+                        }
+                    },
+                },
+                "responses": {
+                    "200": {
+                        "description": "probe result",
+                        "content": {"application/json": {"schema": {"type": "object"}}},
                     }
                 },
             }
