@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.apimatic.io/apimatic-v1.json",
+  "portal": {
+    "site": {
+      "name": "Sway API",
+      "description": "Zero-trust gatekeeping for agentic commerce on PayPal. Agent asks to pay → PayPal authorizes but holds → Sway re-runs the agent on honest-only evidence → capture only if both verdicts agree. No pass, no capture."
+    }
+  },
+  "languages": {
+    "typescript": {},
+    "python": {},
+    "csharp": {}
+  },
+  "plugin": {
+    "pluginId": "sway-context-plugin",
+    "pluginName": "Sway Context Plugin",
+    "pluginVersion": "0.1.0",
+    "description": "Teaches AI coding assistants how to call the Sway API — the pre-capture bouncer between an AI shopping agent and PayPal."
+  }
+}
