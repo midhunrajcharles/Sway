@@ -1,0 +1,23 @@
+# Docs
+
+- Home
+  - [Home](/)
+  - API Reference
+    - Unknown
+      - [Service health](/api/sway/unknown/getHealth)
+      - [Benchmark tasks with real Channel3 products](/api/sway/unknown/getTasks)
+      - [Latest benchmark rows for the AG Grid views](/api/sway/unknown/getResults)
+      - [Headline numbers for the /evidence page](/api/sway/unknown/getEvidence)
+      - [What the shopping agent would buy (baseline, no Sway check)](/api/sway/unknown/postPick)
+      - [Full Sway verdict before PayPal captures](/api/sway/unknown/postVerdict)
+      - [Pay the publisher that causally decided an honest buy](/api/sway/unknown/postPayoutsCredit)
+      - [Create a PayPal Partner Referrals session for a publisher](/api/sway/unknown/postPublishersOnboard)
+      - [PayPal webhook ingest (signature-verified, idempotent by event id)](/api/sway/unknown/postWebhooksPaypal)
+      - [Sandbox probe: AUTHORIZE + payment_source.paypal.vault_id](/api/sway/unknown/postVaultTest)
+  - Context Plugin
+    - [Context Plugin](/context-plugin): Give your AI coding assistant working knowledge of this API's SDKs.
+  - SDKs
+    - [SDKs](/sdks): Client libraries for this API.
+    - [TypeScript SDK](/sdks/typescript): Install and start using the TypeScript SDK.
+    - [Python SDK](/sdks/python): Install and start using the Python SDK.
+    - [C# SDK](/sdks/csharp): Install and start using the C# SDK.

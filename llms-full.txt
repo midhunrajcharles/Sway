@@ -1,0 +1,216 @@
+# Context Plugin (/context-plugin)
+
+The context plugin teaches your AI coding assistant how to use this API's SDKs, so the code it writes for you calls the API the way the SDKs are meant to be used.
+
+## Install [#install]
+
+```bash
+npx context-plugins install "/__downloads/plugin.zip"
+```
+
+## What it does [#what-it-does]
+
+Once the plugin is installed, describe what you want to build and your assistant works from the SDK for your language: how to install it and create a client, how to authenticate, and which methods and types to use for each call. You spend less time correcting code written from guesses about the API.
+
+## Supported languages [#supported-languages]
+
+- TypeScript
+- Python
+- C#
+
+## Supported platforms [#supported-platforms]
+
+- Claude Code
+- Cursor
+- GitHub Copilot
+
+# C# SDK (/sdks/csharp)
+
+[Download SDK](/__downloads/sdk/csharp.zip)
+
+## Intro [#intro]
+
+The Sway API SDK provides access to the Sway API REST APIs.
+
+Sway runs the agent's shopping decision with each page it read ablated, scores each page's causal weight, and asks a second key — the Channel3 catalog — whether the deciding page tells the truth. The result is a pre-capture verdict ('allow' or 'block') and, when honest, a Payout destination.
+
+## Installation [#installation]
+
+Add the SDK as a project reference into your solution:
+
+```bash
+dotnet add reference <path-to-sdk>/src/SwayApi/SwayApi.csproj
+```
+
+The project takes its build settings from the files around it, so reference it in place.
+
+## Quick Start [#quick-start]
+
+### Dependency Injection [#dependency-injection]
+
+Register the client with `IServiceCollection` and resolve it from the container. The `HttpClient` is managed by `IHttpClientFactory`. Configure the client's behavior through `SwayApiClientOptions`.
+
+```csharp
+services.AddSwayApiClient(options =>
+{
+    options.Environment = ServerEnvironment.Production;
+    // TODO: configure more client options here
+});
+```
+
+### Direct Instantiation [#direct-instantiation]
+
+Create the client by passing an `HttpClient` you manage yourself. Configure the client's behavior through `SwayApiClientOptions`.
+
+```csharp
+var httpClient = new HttpClient();
+// TODO: configure more client options here
+var options = new SwayApiClientOptions { Environment = ServerEnvironment.Production };
+var client = new SwayApiClient(httpClient, options);
+```
+
+# SDKs (/sdks)
+
+- [TypeScript](/sdks/typescript): [Download SDK](/__downloads/sdk/typescript.zip)
+- [Python](/sdks/python): [Download SDK](/__downloads/sdk/python.zip)
+- [C#](/sdks/csharp): [Download SDK](/__downloads/sdk/csharp.zip)
+
+# Python SDK (/sdks/python)
+
+[Download SDK](/__downloads/sdk/python.zip)
+
+## Intro [#intro]
+
+The Sway API SDK provides access to the Sway API REST APIs.
+
+Sway runs the agent's shopping decision with each page it read ablated, scores each page's causal weight, and asks a second key — the Channel3 catalog — whether the deciding page tells the truth. The result is a pre-capture verdict ('allow' or 'block') and, when honest, a Payout destination.
+
+## Installation [#installation]
+
+Add the SDK to your project from its folder, with whichever package manager your project uses. Give each tool a path containing a slash, such as `../sway-api` — a bare folder name is looked up on PyPI instead, and resolves to whatever project holds that name there:
+
+```bash
+pip install <path-to-sdk>
+```
+
+```bash
+uv add <path-to-sdk>
+```
+
+```bash
+poetry add <path-to-sdk>
+```
+
+## Quick Start [#quick-start]
+
+### Synchronous client [#synchronous-client]
+
+Construct `SwayApiClient` with keyword arguments, and call `close()` when you are done. Every argument is optional.
+
+```python
+from sway_api import SwayApiClient
+
+client = SwayApiClient(environment="production")
+
+client.close()
+```
+
+Alternatively, scope it — `with SwayApiClient(...) as client:` closes the pool on exit.
+
+### Asynchronous client [#asynchronous-client]
+
+`AsyncSwayApiClient` mirrors `SwayApiClient` with **identical method names**, and every endpoint method is a coroutine. It takes the same arguments, with some differences — for example, the transport argument is `custom_async_http_client`.
+
+```python
+from asyncio import run
+
+from sway_api import AsyncSwayApiClient
+
+async def main() -> None:
+    client = AsyncSwayApiClient(environment="production")
+    await client.aclose()
+
+run(main())
+```
+
+Alternatively, scope it — `async with AsyncSwayApiClient(...) as client:` closes the pool on exit.
+
+# TypeScript SDK (/sdks/typescript)
+
+[Download SDK](/__downloads/sdk/typescript.zip)
+
+## Intro [#intro]
+
+The Sway API SDK provides access to the Sway API REST APIs.
+
+Sway runs the agent's shopping decision with each page it read ablated, scores each page's causal weight, and asks a second key — the Channel3 catalog — whether the deciding page tells the truth. The result is a pre-capture verdict ('allow' or 'block') and, when honest, a Payout destination.
+
+## Installation [#installation]
+
+The SDK compiles to `dist/` before it can be referenced — run its `build` script once in the SDK folder, then add it to your project by path:
+
+```bash
+npm install <path-to-sdk>
+```
+
+## Quick Start [#quick-start]
+
+Create one client and reuse it. Configure its behaviour through `ClientOptions`.
+
+```ts
+import { ServerEnvironment, SwayApiClient } from "sway-api";
+
+const client = new SwayApiClient({ serverEnvironment: ServerEnvironment.Production });
+```
+
+Nothing in `ClientOptions` is required — `new SwayApiClient()` compiles — and each option left out falls back to its default. `serverEnvironment` is spelled out above so the environment a call reaches is visible where the client is built rather than inherited silently.
+
+### From CommonJS [#from-commonjs]
+
+The package ships both dialects from a single entry, so `require` works with full types. In a TypeScript CommonJS file use the `import ... = require(...)` form — a plain destructuring `require` runs fine but gives you `any`.
+
+```ts
+import sdk = require("sway-api");
+
+const client = new sdk.SwayApiClient({ serverEnvironment: sdk.ServerEnvironment.Production });
+```
+
+# Service health (/api/sway/unknown/getHealth)
+
+`GET /api/health`
+
+# Benchmark tasks with real Channel3 products (/api/sway/unknown/getTasks)
+
+`GET /api/tasks`
+
+# Latest benchmark rows for the AG Grid views (/api/sway/unknown/getResults)
+
+`GET /api/results`
+
+# Headline numbers for the /evidence page (/api/sway/unknown/getEvidence)
+
+`GET /api/evidence`
+
+# What the shopping agent would buy (baseline, no Sway check) (/api/sway/unknown/postPick)
+
+`POST /api/pick`
+
+# Full Sway verdict before PayPal captures (/api/sway/unknown/postVerdict)
+
+`POST /api/verdict`
+
+# Pay the publisher that causally decided an honest buy (/api/sway/unknown/postPayoutsCredit)
+
+`POST /api/payouts/credit`
+
+# Create a PayPal Partner Referrals session for a publisher (/api/sway/unknown/postPublishersOnboard)
+
+`POST /api/publishers/onboard`
+
+# PayPal webhook ingest (signature-verified, idempotent by event id) (/api/sway/unknown/postWebhooksPaypal)
+
+`POST /api/webhooks/paypal`
+
+# Sandbox probe: AUTHORIZE + payment_source.paypal.vault_id (/api/sway/unknown/postVaultTest)
+
+`POST /api/vault/test`
