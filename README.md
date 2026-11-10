@@ -5,7 +5,7 @@
 
 > When an AI agent shops with your card, planted web pages can hijack the pick. Sway is the second look before PayPal captures: PayPal holds the money, Sway re-runs the agent on an honest-only web, PayPal captures only if both verdicts agree.
 
-**Try it:** [live demo](https://sway-site.onrender.com) · [Postman collection](docs/postman/sway-api.postman_collection.json) · [API](https://sway-api-utg2.onrender.com/api/tasks)
+**Try it:** [live demo](https://sway-site.onrender.com) · [API docs + SDK portal](https://midhunrajcharles.github.io/Sway/) · [Postman collection](docs/postman/sway-api.postman_collection.json) · [API](https://sway-api-utg2.onrender.com/api/tasks)
 
 **Built with:** PayPal Orders v2 + Payouts + Webhooks · [Channel3](https://trychannel3.com) catalog · [Render](https://render.com) (`render.yaml`, two services, free tier) · [APIMatic](https://www.apimatic.io) (SDK & portal) · Groq / Anthropic / Claude CLI backends
 
