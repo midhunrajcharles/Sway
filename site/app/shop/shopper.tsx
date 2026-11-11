@@ -9,10 +9,12 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { EnvBadge } from "@/components/EnvBadge";
 import { PayPalButton } from "@/components/PayPalButton";
 import { Text } from "@/components/Text";
-import { host, WEBS, type Task } from "@/lib/sway";
+import { host, request, WEBS, type Resolved, type Task } from "@/lib/sway";
 import { useShopFlow, useTasks } from "@/lib/use-shop-flow";
 
 const SUGGESTIONS = ["running-shoes", "earbuds", "coffee-grinder", "carry-on"];
+
+/** Fallback when the Sway API predates /api/resolve: map the words onto a benchmark task. */
 
 function matchTask(tasks: Task[], text: string): Task | undefined {
   const words = new Set(text.toLowerCase().match(/[a-z]+/g) ?? []);
@@ -38,13 +40,16 @@ const noSubscribe = () => () => {};
 export function Shopper() {
   const { tasks, error: tasksError } = useTasks();
   const [taskId, setTaskId] = useState<string | null>(null);
-  const task = tasks?.find((t) => t.id === taskId) ?? tasks?.[0];
+  // A task resolved from the shopper's own words, with real Channel3 products (not one of the presets).
+  const [liveTask, setLiveTask] = useState<Task | null>(null);
+  const task = liveTask ?? tasks?.find((t) => t.id === taskId) ?? tasks?.[0];
+  const [resolving, setResolving] = useState<string | null>(null);
   const [webId, setWebId] = useState("deceptive_visible");
   const [input, setInput] = useState("");
   const [listening, setListening] = useState(false);
   const [speakOn, setSpeakOn] = useState(false);
   const [settings, setSettings] = useState(false);
-  const [miss, setMiss] = useState<string | null>(null);
+  const [miss, setMiss] = useState<{ text: string; reason?: string } | null>(null);
   const hasMic = useSyncExternalStore(noSubscribe, () => !!recognitionCtor(), () => false);
   const web = webId;
   const f = useShopFlow(task, web);
@@ -61,17 +66,29 @@ export function Shopper() {
     }
   }, [f.events, f.phase, speakOn]);
 
-  function ask(text: string) {
-    if (!text.trim() || f.busy || !tasks) return;
-    const t = matchTask(tasks, text);
+  async function ask(text: string) {
+    if (!text.trim() || f.busy || resolving || !tasks) return;
     setInput("");
-    if (!t) {
-      setMiss(text);
-      return;
-    }
     setMiss(null);
-    setTaskId(t.id);
-    setPending(text);
+    setResolving(text);
+    try {
+      const r = await request<Resolved>("/api/shop/resolve", { text });
+      setLiveTask(r.live ? r.task : null);
+      if (!r.live) setTaskId(r.task.id);
+      setPending(text);
+    } catch (e) {
+      const reason = (e as Error).message;
+      const t = reason === "not found" ? matchTask(tasks, text) : undefined;
+      if (t) {
+        setLiveTask(null);
+        setTaskId(t.id);
+        setPending(text);
+      } else {
+        setMiss({ text, reason: reason === "not found" ? undefined : reason });
+      }
+    } finally {
+      setResolving(null);
+    }
   }
 
   // Start once the chosen task is in place, so the agent shops for the right thing.
@@ -169,14 +186,19 @@ export function Shopper() {
                 {tasksError}
               </p>
             )}
+            {resolving && (
+              <p className="sw-small sw-muted" style={{ marginTop: "1rem" }} role="status">
+                Searching the catalog for “{resolving}”…
+              </p>
+            )}
             {miss && (
               <p className="sw-small" style={{ marginTop: "1rem" }}>
-                I can't shop for “{miss}” yet. Here's what I can find for you.
+                {miss.reason ?? `I can't shop for “${miss.text}” yet.`} Or try one of these:
               </p>
             )}
             <div className="sw-chips" style={{ justifyContent: "center", marginTop: "1.75rem" }}>
-              {(tasks ?? []).filter((t) => SUGGESTIONS.includes(t.id)).map((t) => (
-                <button key={t.id} className="sw-chip" onClick={() => ask(`I need ${t.ask}`)}>
+              {(tasks ?? []).filter((t) => miss || SUGGESTIONS.includes(t.id)).map((t) => (
+                <button key={t.id} className="sw-chip" disabled={!!resolving} onClick={() => ask(`I need ${t.ask}`)}>
                   {t.ask}
                 </button>
               ))}
@@ -251,7 +273,7 @@ export function Shopper() {
                 {f.note.text}
               </p>
             )}
-            {f.phase === "done" && f.revealed && (
+            {f.phase === "done" && f.revealed && !liveTask && (
               <div className="sw-inline-actions">
                 <Link className="sw-link sw-small" href="/xray">
                   See why in the x-ray →
@@ -273,19 +295,19 @@ export function Shopper() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={!tasks ? "Connecting to Sway…" : f.busy ? "Your agent is working…" : "I need running shoes for daily training"}
+          placeholder={!tasks ? "Connecting to Sway…" : resolving ? "Searching the catalog…" : f.busy ? "Your agent is working…" : "I need running shoes for daily training"}
           aria-label="What do you need?"
-          disabled={f.busy || !tasks}
+          disabled={f.busy || !!resolving || !tasks}
         />
         {hasMic && (
-          <button type="button" className="sw-icon-btn" data-active={listening || undefined} onClick={listen} aria-label="Speak your request" disabled={f.busy}>
+          <button type="button" className="sw-icon-btn" data-active={listening || undefined} onClick={listen} aria-label="Speak your request" disabled={f.busy || !!resolving}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" strokeWidth="1.8" />
               <path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
           </button>
         )}
-        <button className="sw-send" aria-label="Send" disabled={f.busy || !input.trim()}>
+        <button className="sw-send" aria-label="Send" disabled={f.busy || !!resolving || !input.trim()}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 19V5M6 11l6-6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

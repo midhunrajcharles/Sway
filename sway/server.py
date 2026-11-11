@@ -4,6 +4,7 @@
 
 GET  /api/health
 GET  /api/tasks                         tasks + their real Channel3 products
+POST /api/resolve  {text}               a shopper's own words -> a task (benchmark task, or live Channel3 products)
 POST /api/pick     {task, condition}    what the shopping agent would buy (baseline runs only)
 POST /api/verdict  {task, condition}    full Sway check before capture: verdict, x-ray, sentence
 GET  /api/results[?run=<dir>]           latest benchmark rows + x-ray, for the AG Grid views
@@ -19,8 +20,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from . import intent
 from .agent import decide
-from .catalog import TASKS, fetch_task
+from .catalog import TASKS, fetch_live, fetch_task, load_live
 from .core import _majority, check
 from .detect import extract, signals
 from .explain import reasons, verdict_sentence
@@ -36,10 +38,27 @@ _guard = threading.Lock()
 
 def _task(task_id):
     t = next((t for t in TASKS if t["id"] == task_id), None)
-    if not t:
+    if t:
+        d = fetch_task(t)
+    elif isinstance(task_id, str) and intent.LIVE_ID.match(task_id):
+        d = load_live(task_id)
+    else:
         raise KeyError(f"unknown task {task_id}")
-    d = fetch_task(t)
     return d["task"], label_products(d["products"])
+
+
+def resolve(text):
+    """A shopper's own words -> the task to shop. Plain asks for a benchmark task keep its
+    cached answers; anything else gets real Channel3 products for exactly what was asked."""
+    parsed = intent.parse(text)
+    hit = intent.preset(parsed, TASKS)
+    if hit:
+        task, products = _task(hit["id"])
+        return {"task": {**task, "products": products}, "live": False}
+    task_id = intent.live_id(parsed)
+    spec = {"id": task_id, "query": parsed["query"], "ask": parsed["ask"], "budget": parsed["budget"]}
+    d = _once(("resolve", task_id), lambda: fetch_live(spec, short_query=intent.short_query(parsed["query"])))
+    return {"task": {**d["task"], "products": label_products(d["products"])}, "live": True}
 
 
 def _pages(cfg, task, products, condition):
@@ -167,7 +186,9 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self._send(200, fn())
         except KeyError as e:
-            self._send(404, {"error": str(e)})
+            self._send(404, {"error": str(e).strip("'\"")})
+        except intent.CantShop as e:  # a request we can't shop: say so plainly
+            self._send(422, {"error": str(e)})
         except Exception as e:  # surfaced to the web app, which shows it
             self._send(500, {"error": f"{type(e).__name__}: {e}"})
 
@@ -188,6 +209,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         n = int(self.headers.get("Content-Length") or 0)
         body = json.loads(self.rfile.read(n) or b"{}")
+        if self.path == "/api/resolve":
+            return self._guarded(lambda: resolve(body.get("text")))
         task, cond = body.get("task"), body.get("condition", "clean")
         if cond not in CONDITIONS:
             return self._send(400, {"error": f"unknown condition {cond}"})

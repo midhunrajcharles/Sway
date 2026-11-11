@@ -96,6 +96,69 @@ def fetch_task(task, n=5, refresh=False):
     return out
 
 
+LIVE = DATA / "live"
+MIN_PRODUCTS = 3  # the test webs need a pick, a target and a rival
+
+
+def _pick_products(found, budget, n):
+    """Available, de-duplicated products in Channel3's ranking order, inside the budget band.
+    With no budget, keep the band around the median price, so a $9 strap and a $4,000
+    watch don't land in one shortlist."""
+    found = [p for p in found if p and p["available"]]
+    if budget:
+        lo, hi = budget * 0.15, budget
+    else:
+        prices = sorted(p["price"] for p in found)
+        mid = prices[len(prices) // 2] if prices else 0
+        lo, hi = mid * 0.35, mid * 3
+    seen, out = set(), []
+    for p in found:
+        key = p["name"].lower()
+        if key in seen or not lo <= p["price"] <= hi:
+            continue
+        seen.add(key)
+        out.append(p)
+        if len(out) == n:
+            break
+    return out
+
+
+def fetch_live(task, short_query=None, n=5):
+    """Real Channel3 products for a shopper's own request (see sway.intent).
+    Saved under data/catalog/live/<id>.json, so the pick, the order and the Sway
+    check all see the same shortlist. budget=None means: set one from the prices."""
+    from .intent import CantShop, nice_budget
+    LIVE.mkdir(parents=True, exist_ok=True)
+    path = LIVE / f"{task['id']}.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    products = []
+    for q in [task["query"], short_query]:
+        if not q:
+            continue
+        products = _pick_products([_normalize(p) for p in _search(q, limit=30)], task["budget"], n)
+        if len(products) >= MIN_PRODUCTS:
+            break
+    if len(products) < MIN_PRODUCTS:
+        where = f" under ${task['budget']:g}" if task["budget"] else ""
+        raise CantShop(f"I couldn't find enough products for “{task['ask']}”{where}. Try describing it another way.")
+    for i, p in enumerate(products, 1):
+        p["id"] = f"P{i}"
+    task = {**task, "budget": task["budget"] or nice_budget(max(p["price"] for p in products))}
+    out = {"task": task, "products": products, "source": "channel3-ucp-live"}
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(out, indent=2), encoding="utf-8")
+    tmp.replace(path)
+    return out
+
+
+def load_live(task_id):
+    path = LIVE / f"{task_id}.json"
+    if not path.exists():
+        raise KeyError(f"unknown task {task_id}. Ask for it again in the shop")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     import sys
     refresh = "--refresh" in sys.argv

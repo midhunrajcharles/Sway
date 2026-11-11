@@ -17,7 +17,7 @@
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type { Evidence, LedgerEntry, Pick, Task, Verdict } from "@/lib/sway";
+import type { Evidence, LedgerEntry, Pick, Resolved, Task, Verdict } from "@/lib/sway";
 
 export { host } from "@/lib/sway";
 
@@ -44,6 +44,7 @@ async function api<T>(p: string, body?: unknown): Promise<T> {
 }
 
 export const swayTasks = () => api<{ conditions: string[]; tasks: Task[] }>("/api/tasks");
+export const swayResolve = (text: string) => api<Resolved>("/api/resolve", { text });
 export const swayPick = (task: string, condition: string) => api<Pick>("/api/pick", { task, condition });
 export const swayVerdict = (task: string, condition: string) => api<Verdict>("/api/verdict", { task, condition });
 export const swayEvidence = () => api<Evidence>("/api/evidence");

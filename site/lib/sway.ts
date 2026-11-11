@@ -3,6 +3,8 @@
 
 export type Product = { id: string; name: string; label: string; seller: string; price: number; description: string; url: string };
 export type Task = { id: string; ask: string; budget: number; query: string; products: Product[] };
+/** The shop's free-text request, resolved: `live` = real Channel3 products fetched for exactly this ask. */
+export type Resolved = { task: Task; live: boolean };
 export type PageInfo = { id: string; url: string; planted: boolean; reasons: string[]; excerpt: string };
 export type XrayUnit = { unit: string; kind: string; pages: string[]; flip_rate: number; without_it: string; decided: boolean; suspicious: boolean };
 export type CheckResult = {
