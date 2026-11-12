@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/github/license/midhunrajcharles/Sway)](LICENSE)
 [![PayPal AI Hackathon 2026](https://img.shields.io/badge/PayPal%20AI%20Hackathon-2026-0070ba)](https://paypalaihackathon.devpost.com/)
 
-[**Live demo**](https://sway-site.onrender.com) · [**API portal**](https://midhunrajcharles.github.io/Sway/) · [**Postman**](docs/postman/sway-api.postman_collection.json) · [**Devpost**](docs/devpost-story.md)
+[**Live demo**](https://sway-site.onrender.com) · [**API portal**](https://midhunrajcharles.github.io/Sway/) · [**Postman**](docs/postman/sway-api.postman_collection.json)
 
 </div>
 
@@ -355,9 +355,6 @@ The model-call cache in `data/cache` is included, so benchmarked products answer
 
 | File | What it is |
 |---|---|
-| [`docs/devpost-story.md`](docs/devpost-story.md) | The Devpost submission text |
-| [`docs/demo-script.md`](docs/demo-script.md) | 2:50 shot list for the demo video |
-| [`docs/pitch.md`](docs/pitch.md) | 5-minute live pitch + hard-questions appendix |
 | [`docs/deep-dive.md`](docs/deep-dive.md) | Architecture, novel-vs-assembled, per-criterion scoring |
 | [`docs/limits.md`](docs/limits.md) | Honest caveats and known blind spots |
 | [`docs/deploy-render.md`](docs/deploy-render.md) | 10-line deploy guide for Render |
@@ -412,6 +409,6 @@ Sway names its gaps honestly.
 
 Built for the **[PayPal AI Hackathon 2026](https://paypalaihackathon.devpost.com/)**.
 
-**[Live demo](https://sway-site.onrender.com)** · **[API portal](https://midhunrajcharles.github.io/Sway/)** · **[Devpost submission](docs/devpost-story.md)**
+**[Live demo](https://sway-site.onrender.com)** · **[API portal](https://midhunrajcharles.github.io/Sway/)**
 
 </div>
